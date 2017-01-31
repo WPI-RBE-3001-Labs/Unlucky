@@ -50,7 +50,7 @@ all: RBE3001_Team13.elf secondary-outputs
 RBE3001_Team13.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: AVR C Linker'
-	avr-gcc -Wl,-Map,RBE3001_Team13.map -Wl,-u,vfprintf -lprintf_flt -lm -L"D:\workspace\RBELib\Release" -mmcu=atmega644p -o "RBE3001_Team13.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	avr-gcc -Wl,-Map,RBE3001_Team13.map -Wl,-u,vfprintf -lprintf_flt -lm -L"C:\Users\Lucy\workspace\RBELib\trunk\RBELib\Release" -mmcu=atmega644p -o "RBE3001_Team13.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
