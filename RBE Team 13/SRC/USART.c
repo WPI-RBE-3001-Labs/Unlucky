@@ -8,7 +8,7 @@
 
 #include "RBELib/RBELib.h"
 //#include <avr/io.h>
-//add comment
+
 void debugUSARTInit(unsigned long baudrate){
 	/*Set baud rate */
 	UBRR1L = (CLK / (16 * baudrate)) -1;
