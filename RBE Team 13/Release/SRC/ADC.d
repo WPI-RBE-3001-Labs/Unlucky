@@ -1,46 +1,46 @@
-SRC/ADC.d SRC/ADC.o: ../SRC/ADC.c \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/RBELib.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/ADC.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/DAC.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/Debug.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/motors.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/USARTDebug.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/timer.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/Periph.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/pot.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/PID.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/reg_structs.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/ports.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/SPI.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/SetServo.h \
-  R:\ece_mdrive\working\ code\RBELib\include/RBELib/SlaveSelects.h
+SRC/ADC.o SRC/ADC.o: ../SRC/ADC.c \
+  D:\workspace\RBELib\include/RBELib/RBELib.h \
+  D:\workspace\RBELib\include/RBELib/ADC.h \
+  D:\workspace\RBELib\include/RBELib/DAC.h \
+  D:\workspace\RBELib\include/RBELib/Debug.h \
+  D:\workspace\RBELib\include/RBELib/motors.h \
+  D:\workspace\RBELib\include/RBELib/USARTDebug.h \
+  D:\workspace\RBELib\include/RBELib/timer.h \
+  D:\workspace\RBELib\include/RBELib/Periph.h \
+  D:\workspace\RBELib\include/RBELib/pot.h \
+  D:\workspace\RBELib\include/RBELib/PID.h \
+  D:\workspace\RBELib\include/RBELib/reg_structs.h \
+  D:\workspace\RBELib\include/RBELib/ports.h \
+  D:\workspace\RBELib\include/RBELib/SPI.h \
+  D:\workspace\RBELib\include/RBELib/SetServo.h \
+  D:\workspace\RBELib\include/RBELib/SlaveSelects.h
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/RBELib.h:
+D:\workspace\RBELib\include/RBELib/RBELib.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/ADC.h:
+D:\workspace\RBELib\include/RBELib/ADC.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/DAC.h:
+D:\workspace\RBELib\include/RBELib/DAC.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/Debug.h:
+D:\workspace\RBELib\include/RBELib/Debug.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/motors.h:
+D:\workspace\RBELib\include/RBELib/motors.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/USARTDebug.h:
+D:\workspace\RBELib\include/RBELib/USARTDebug.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/timer.h:
+D:\workspace\RBELib\include/RBELib/timer.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/Periph.h:
+D:\workspace\RBELib\include/RBELib/Periph.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/pot.h:
+D:\workspace\RBELib\include/RBELib/pot.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/PID.h:
+D:\workspace\RBELib\include/RBELib/PID.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/reg_structs.h:
+D:\workspace\RBELib\include/RBELib/reg_structs.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/ports.h:
+D:\workspace\RBELib\include/RBELib/ports.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/SPI.h:
+D:\workspace\RBELib\include/RBELib/SPI.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/SetServo.h:
+D:\workspace\RBELib\include/RBELib/SetServo.h:
 
-R:\ece_mdrive\working\ code\RBELib\include/RBELib/SlaveSelects.h:
+D:\workspace\RBELib\include/RBELib/SlaveSelects.h:
