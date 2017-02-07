@@ -17,7 +17,7 @@ volatile unsigned long sysTime = 0;
 volatile unsigned long timerCounter;
 volatile unsigned long intTime;
 volatile double timerCountVal = 9;
-
+int test = 10;
 //Timer0 should be default 1843200Hz
 
 ISR(TIMER0_OVF_vect){
@@ -26,6 +26,8 @@ ISR(TIMER0_OVF_vect){
 		timerCounter=0;
 		sysTime++;
 		intTime++;
+		DDRC = 0xFF;
+		test = PINC0;
 	}
 }
 
@@ -50,7 +52,8 @@ while((ADCSRA & (1<< ADSC)) >0){
 	float millis = (count*((5.0*10*10*10)/1023.0));
 	float angle = (count*(270.0/1023.0));
 	printf("Time: %f Angle: %f Count: %f mV: %f \n\r", time, angle, count, millis);
-	timerCountVal = Q3();
+	timerCountVal = Q3(angle);
+	printf(test);
 }
 }
 return 0;

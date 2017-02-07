@@ -5,7 +5,7 @@
  *      Author: sangu
  */
 #include "RBELib/RBELib.h"
-int Q3()
+int Q3(float angle)
 {
 	int timerCountVal = 9;
 	DDRB = 0x00;
@@ -27,6 +27,7 @@ int Q3()
 			TCCR0B |= 1 << CS00;
 				timerCountVal = 18432;
 			}
+
 		return timerCountVal;
 }
 
