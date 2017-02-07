@@ -15,7 +15,7 @@ ISR(TIMER0_COMPA_vect) {
 void initCLK() {
 	TCCR0A = (1<<WGM01)|(1<<COM0A0); //???
 	TCCR0B = (1 << CS02) | (1 << CS00); //sets the timer0 prescaler to 1024
-	//every time timerCounter == 1800
+	//every time timerCounter == 1800?, 1843200/1024
 
 }
 
@@ -56,6 +56,7 @@ void readSwitches() {
 }
 void setPWM() {
 // Should set frequency and dutycycle when changed
+	//divide clock general counter by frequncy?
 }
 void Lab1Code() {
 	initCLK();
@@ -66,8 +67,12 @@ void Lab1Code() {
 		//if this works ten this means that the timer works just not reading correctly
 		readADC();
 		timerCounter = 0;
+		PIND4 = 0;
 	}
-
+	if(timerCounter > 3600)
+	{
+		PIND4 = 1; //hook up LED to PORT D to test output
+	}
 
 
 }

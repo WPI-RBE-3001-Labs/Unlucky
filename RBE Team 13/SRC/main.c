@@ -12,6 +12,7 @@ int main(void) {
 	debugUSARTInit(115200); //Initialize UART
 	initADC(7);
 	DDRB = 0x00; //enable PORTB for switches
+	DDRD = 0XFF; //set PORTD as an output
 	sei();
 	while (1)
 	{
