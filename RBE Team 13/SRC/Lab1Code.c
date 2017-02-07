@@ -49,9 +49,13 @@ void readSwitches() {
 	if (PINB5 == 1) {
 		frequency = 100;
 	}
+	else
+	{
+		frequency = 10; //default
+	}
 }
-void setClock(int newFrequency) {
-
+void setPWM() {
+// Should set frequency and dutycycle when changed
 }
 void Lab1Code() {
 	initCLK();
