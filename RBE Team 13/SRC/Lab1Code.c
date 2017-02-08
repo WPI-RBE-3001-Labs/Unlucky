@@ -10,11 +10,12 @@ int time = 0;
 volatile unsigned long timerCounter = 0;
 ISR(TIMER0_COMPA_vect) {
 	timerCounter++;
-	if(timerCounter >= 18000)
+	if(timerCounter >= frequency)
 	{
 		time ++;
 		timerCounter = 0;
-	}
+		PINB7=1;
+	}else PINB7 = 0;
 }
 
 void initCLK() {
