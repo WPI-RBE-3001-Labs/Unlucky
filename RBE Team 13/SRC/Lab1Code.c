@@ -64,7 +64,7 @@ void readSwitches() {
 	}
 }
 void setCLK() {
-		PORTD = 0x00;
+		PORTD = square;
 }
 int lastSeen = 0;
 void Lab1Code() {
