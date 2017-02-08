@@ -5,17 +5,19 @@
  *      Author: sangu
  */
 #include "RBELib/RBELib.h"
-
+volatile unsigned long frequency = 10;
 int time = 0;
 volatile unsigned long timerCounter = 0;
+int square = 0x00;
 ISR(TIMER0_COMPA_vect) {
 	timerCounter++;
-	if(timerCounter >= frequency)
-	{
-		time ++;
+	if(timerCounter == frequency/2){
+		square = (!(square));
+	}
+	if(timerCounter>= 18000){
+		time++;
 		timerCounter = 0;
-		PINB7=1;
-	}else PINB7 = 0;
+	}
 }
 
 void initCLK() {
@@ -42,19 +44,18 @@ void readADC() {
 	mV = (count * ((5.0 * 10 * 10 * 10) / 1023.0));
 	angle = (count * (270.0 / 1023.0));
 	printf("Time: %0.1f Angle: %0.1f Count: %0.1f mV: %0.1f \n\r", (float)time, angle, count, mV);
-
-	//}
 }
-float frequency = 10; //10Hz default
+
 unsigned int dutyCycle = 50; //default duty cycle
 void readSwitches() {
-	if (PINB1 == 1) {
+
+	if (PINB == 1) { //sw0
 		frequency = 1;
 	}
-	if (PINB3 == 1) {
+	else if (PINB == 2) { //sw1
 		frequency = 20;
 	}
-	if (PINB5 == 1) {
+	else if (PINB == 4) { //sw2
 		frequency = 100;
 	}
 	else
@@ -63,19 +64,25 @@ void readSwitches() {
 	}
 }
 void setCLK() {
-// Should set frequency and dutycycle when changed
-	//divide clock general counter by frequncy?
+		PORTD = 0x00;
 }
 int lastSeen = 0;
 void Lab1Code() {
 	initCLK();
+	setCLK();
 	readSwitches();
+
+
 	if(time == lastSeen +1)
 	{
 		//Updates once a second
-		readADC();
+		//readADC();
 		//PIND4 = 0
+		printf("Frequency %d\n\r", frequency);
+		float x = PINB;
+		//printf("pinb1 %f \n\r", x);
 		lastSeen = time;
+		PINB = 0x00;
 	}
 	if(time%2 == 0)
 	{
@@ -84,4 +91,3 @@ void Lab1Code() {
 
 
 }
-
