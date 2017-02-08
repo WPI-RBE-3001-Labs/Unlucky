@@ -13,12 +13,9 @@ int main(void) {
 	initADC(7);
 	DDRB = 0x00; //enable PORTB for switches
 	PORTB = 0x00;
-
-	DDRD = 1 << PIN5; //set PORTD as an output
-
+	DDRD = 0xFF; //set PORTD as an output
 	sei();
-	while (1)
-	{
+	while (1) {
 		Lab1Code();
 	}
 	return 0;
