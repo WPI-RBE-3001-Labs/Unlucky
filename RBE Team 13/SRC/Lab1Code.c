@@ -13,10 +13,14 @@ int i = 0;
 volatile unsigned long globalCount = 0;
 float dutyCycle = 50; //default duty cycle
 float dutyCycle2 = 50;
+int timeR = 0;
 
 ISR(TIMER0_COMPA_vect) {
 	timerCounter++;
 	globalCount++;
+	if (frequency == 225) {
+		readADC();
+	}
 	if (i == 1) {
 		if (timerCounter >= (18000 / (frequency * (dutyCycle / 100)))) {
 			PORTD = 0xFF;
@@ -61,12 +65,26 @@ void readADC() {
 	dutyCycle = (count * (100.0 / 1023.0));
 	dutyCycle2 = 100 - dutyCycle;
 	//printf("Time: %d Angle: %0.1f Count: %0.1f mV: %0.1f \n\r", time, angle, count, mV);//this is the ADC values for Part 2
-	printf("Duty Cycle: %f Pot Value: %0.1f Frequency: %d State: %d  \n\r",
-			dutyCycle, count, frequency, i); // This is print for part 3
+	if (frequency == 225) {
+		printf("( %d , %0.1f , %0.1f , %0.1f ) \n\r", time, angle, count, mV);
+	} else {
+		printf("Duty Cycle: %f Pot Value: %0.1f Frequency: %d State: %d  \n\r",
+				dutyCycle, count, frequency, i); // This is print for part 3
+	}
+
 }
 
 void readSwitches() {
-
+	printf("%f \n\r", (int) PINB);
+	if (PINB == 16) //sw4 (first button)
+			{
+		printf("YO");
+		while (globalCount != 0) //wait until timer resets (should happen every second)
+		{
+		}
+		frequency = 225;
+		timeR = time;
+	}
 	if (PINB == 1) { //sw0
 		frequency = 1;
 	} else if (PINB == 2) { //sw1
@@ -77,15 +95,12 @@ void readSwitches() {
 		frequency = 10; //default
 	}
 }
-void setDC() {
 
-}
 int lastSeen = 0;
 void Lab1Code() {
 	initCLK();
-	setDC();
 	readSwitches();
-	readADC();
+	//readADC();
 	PINB = 0x00; //resets switch so they always keep correct value
 
 }
