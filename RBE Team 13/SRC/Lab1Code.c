@@ -15,12 +15,32 @@ float dutyCycle = 50; //default duty cycle
 float dutyCycle2 = 50;
 int timeR = 0;
 
+
+float angle = 0;
+int value = 0;
+int higByte = 0;
+float count = 0;
+float mV = 0;
+
+void readADC() {
+	ADCSRA = ADCSRA | (1 << ADSC);
+	//while ((ADCSRA & (1 << ADSC)) > 0) {
+	value = ADCL;
+	higByte = ADCH;
+	count = value + (higByte << 8);
+	mV = (count * ((5.0 * 10 * 10 * 10) / 1023.0));
+	angle = (count * (270.0 / 1023.0));
+	dutyCycle = (count * (100.0 / 1023.0));
+	dutyCycle2 = 100 - dutyCycle;
+	//printf("Time: %d Angle: %0.1f Count: %0.1f mV: %0.1f \n\r", time, angle, count, mV);//this is the ADC values for Part 2
+	printf("DC: %f PV: %0.1f F: %d S: %d  \n\r",
+				dutyCycle, count, frequency, i); // This is print for part 3
+	}
+
+
 ISR(TIMER0_COMPA_vect) {
 	timerCounter++;
 	globalCount++;
-	if (frequency == 225) {
-		readADC();
-	}
 	if (i == 1) {
 		if (timerCounter >= (18000 / (frequency * (dutyCycle / 100)))) {
 			PORTD = 0xFF;
@@ -48,43 +68,10 @@ void initCLK() {
 
 }
 
-float angle = 0;
-int value = 0;
-int higByte = 0;
-float count = 0;
-float mV = 0;
-
-void readADC() {
-	ADCSRA = ADCSRA | (1 << ADSC);
-	//while ((ADCSRA & (1 << ADSC)) > 0) {
-	value = ADCL;
-	higByte = ADCH;
-	count = value + (higByte << 8);
-	mV = (count * ((5.0 * 10 * 10 * 10) / 1023.0));
-	angle = (count * (270.0 / 1023.0));
-	dutyCycle = (count * (100.0 / 1023.0));
-	dutyCycle2 = 100 - dutyCycle;
-	//printf("Time: %d Angle: %0.1f Count: %0.1f mV: %0.1f \n\r", time, angle, count, mV);//this is the ADC values for Part 2
-	if (frequency == 225) {
-		printf("( %d , %0.1f , %0.1f , %0.1f ) \n\r", time, angle, count, mV);
-	} else {
-		printf("Duty Cycle: %f Pot Value: %0.1f Frequency: %d State: %d  \n\r",
-				dutyCycle, count, frequency, i); // This is print for part 3
-	}
-
-}
-
 void readSwitches() {
-	printf("%f \n\r", (int) PINB);
-	if (PINB == 16) //sw4 (first button)
-			{
-		printf("YO");
-		while (globalCount != 0) //wait until timer resets (should happen every second)
-		{
-		}
-		frequency = 225;
-		timeR = time;
-	}
+	//seems to be bug with SW2 registering too high initially
+	//int x = PINB;
+	//printf("%0.1d \n\r", x);
 	if (PINB == 1) { //sw0
 		frequency = 1;
 	} else if (PINB == 2) { //sw1
@@ -100,7 +87,7 @@ int lastSeen = 0;
 void Lab1Code() {
 	initCLK();
 	readSwitches();
-	//readADC();
+	readADC();
 	PINB = 0x00; //resets switch so they always keep correct value
 
 }
