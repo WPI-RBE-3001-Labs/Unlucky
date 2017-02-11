@@ -22,6 +22,31 @@ int higByte = 0;
 float count = 0;
 float mV = 0;
 
+ISR(TIMER0_COMPA_vect) {
+	timerCounter++;
+	globalCount++;
+	if (globalCount >= 18000) { //18000 = 1 sec
+		time++;
+		globalCount = 0;
+	}
+}
+
+void DC()
+{
+	if (i == 1) {
+			if (timerCounter >= (18000 / (frequency * (dutyCycle / 100)))) {
+				PORTD = 0xFF;
+				i = 0;
+				timerCounter = 0;
+			}
+		} else if (i == 0) {
+			if (timerCounter >= (1800 / (frequency * dutyCycle2 / 100))) {
+				PORTD = 0x00;
+				i = 1;
+				timerCounter = 0;
+			}
+		}
+}
 void readADC() {
 	ADCSRA = ADCSRA | (1 << ADSC);
 	//while ((ADCSRA & (1 << ADSC)) > 0) {
@@ -38,27 +63,6 @@ void readADC() {
 	}
 
 
-ISR(TIMER0_COMPA_vect) {
-	timerCounter++;
-	globalCount++;
-	if (i == 1) {
-		if (timerCounter >= (18000 / (frequency * (dutyCycle / 100)))) {
-			PORTD = 0xFF;
-			i = 0;
-			timerCounter = 0;
-		}
-	} else if (i == 0) {
-		if (timerCounter >= (1800 / (frequency * dutyCycle2 / 100))) {
-			PORTD = 0x00;
-			i = 1;
-			timerCounter = 0;
-		}
-	}
-	if (globalCount >= 18000) { //18000 = 1 sec
-		time++;
-		globalCount = 0;
-	}
-}
 
 void initCLK() {
 	TCCR0A = (1 << WGM01) | (1 << COM0A0); //???
@@ -88,6 +92,7 @@ void Lab1Code() {
 	initCLK();
 	readSwitches();
 	readADC();
+	DC();
 	PINB = 0x00; //resets switch so they always keep correct value
 
 }
