@@ -31,7 +31,7 @@ ISR(TIMER0_COMPA_vect) {
 	}
 }
 
-void outputPWM() //duty cycle not accurate but does change
+void outputPWM()
 {
 	if (i == 1) {
 		if (timerCounter >= (18000 / (frequency * (dutyCycle / 100)))) {
@@ -40,7 +40,7 @@ void outputPWM() //duty cycle not accurate but does change
 			timerCounter = 0;
 		}
 	} else if (i == 0) {
-		if (timerCounter >= (1800 / (frequency * dutyCycle2 / 100))) {
+		if (timerCounter >= (18000 / (frequency * (dutyCycle2 / 100)))) {
 			PORTD = 0x00;
 			i = 1;
 			timerCounter = 0;
@@ -109,8 +109,8 @@ int lastSeen = 0;
 void Lab1Code() {
 	initCLK();
 	readSwitches();
-	readADC();
-	//readPWM();
+	//readADC();
+	readPWM();
 	PINB = 0x00; //resets switch so they always keep correct value
 
 }
