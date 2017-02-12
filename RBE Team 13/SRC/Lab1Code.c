@@ -30,9 +30,14 @@ ISR(TIMER0_COMPA_vect) {
 		frequency = 10; //resets frequency
 	}
 }
-
-void outputPWM()
-{
+void outputADC() {
+	if (angle > 200) {
+		PORTD = 0xFF;
+	} else {
+		PORTD = 0x00;
+	}
+}
+void outputPWM() {
 	if (i == 1) {
 		if (timerCounter >= (18000 / (frequency * (dutyCycle / 100)))) {
 			PORTD = 0xFF;
@@ -57,6 +62,7 @@ void readADC() {
 	float timeS = time + (globalCount / 18000.f);
 	printf("Time: %f Angle: %0.1f Count: %0.1f mV: %0.1f \n\r", timeS, angle,
 			count, mV); //this is the ADC values for Part 2
+	outputADC();
 }
 void readPWM() {
 	ADCSRA = ADCSRA | (1 << ADSC);
@@ -68,19 +74,11 @@ void readPWM() {
 	if (frequency == 225) //should stop printing after 1 second
 			{
 		printf("%d, %d \n\r", globalCount, i); //print for part 6
-	} else {
+	} else if (butP == 0) {
 		printf("DC: %f PV: %0.1f F: %d S: %d  \n\r", dutyCycle, count,
 				frequency, i); // This is print for part 3 (state doesnt work correctly)
 	}
 	outputPWM();
-}
-
-void initCLK() {
-	TCCR0A = (1 << WGM01) | (1 << COM0A0); //???
-	TCCR0B = (1 << CS02) | (1 << CS00); //sets the timer0 prescaler to 1024
-	//every time timerCounter == 1800?, 1843200/1024
-	TIMSK0 = 0x2; //OCIEA enable
-
 }
 
 void readSwitches() {
@@ -105,12 +103,9 @@ void readSwitches() {
 	}
 }
 
-int lastSeen = 0;
 void Lab1Code() {
-	initCLK();
 	readSwitches();
-	//readADC();
-	readPWM();
+	readADC();
+	//readPWM();
 	PINB = 0x00; //resets switch so they always keep correct value
-
 }
