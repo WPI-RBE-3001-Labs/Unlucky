@@ -6,18 +6,21 @@
 C_SRCS += \
 ../SRC/ADC.c \
 ../SRC/Lab1Code.c \
+../SRC/Lab2Code.c \
 ../SRC/USART.c \
 ../SRC/main.c 
 
 OBJS += \
 ./SRC/ADC.o \
 ./SRC/Lab1Code.o \
+./SRC/Lab2Code.o \
 ./SRC/USART.o \
 ./SRC/main.o 
 
 C_DEPS += \
 ./SRC/ADC.d \
 ./SRC/Lab1Code.d \
+./SRC/Lab2Code.d \
 ./SRC/USART.d \
 ./SRC/main.d 
 

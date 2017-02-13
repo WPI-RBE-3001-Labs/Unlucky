@@ -20,7 +20,7 @@ int value = 0;
 int higByte = 0;
 float count = 0;
 float mV = 0;
-
+/*
 ISR(TIMER0_COMPA_vect) {
 	timerCounter++;
 	globalCount++;
@@ -30,6 +30,7 @@ ISR(TIMER0_COMPA_vect) {
 		frequency = 10; //resets frequency
 	}
 }
+*/
 void outputADC() {
 	if (angle > 200) {
 		PORTD = 0xFF;
@@ -103,7 +104,23 @@ void readSwitches() {
 	}
 }
 
+void initCLK() {
+	TCCR0A = (1 << WGM01) | (1 << COM0A0); //???
+	TCCR0B = (1 << CS02) | (1 << CS00); //sets the timer0 prescaler to 1024
+	//every time timerCounter == 1800?, 1843200/1024
+	TIMSK0 = 0x2; //OCIEA enable
+	sei();
+}
+void initLab1()
+{
+	DDRB = 0x00; //enable PORTB for switches
+	PORTB = 0x00;
+	DDRD = 0xFF; //set PORTD as an output
+	initADC(7); // channel 0 for arm and 7 for lab 1 potentiometer
+	initCLK();
+}
 void Lab1Code() {
+
 	readSwitches();
 	readADC();
 	//readPWM();
