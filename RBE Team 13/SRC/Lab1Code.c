@@ -21,16 +21,16 @@ int higByte = 0;
 float count = 0;
 float mV = 0;
 /*
-ISR(TIMER0_COMPA_vect) {
-	timerCounter++;
-	globalCount++;
-	if (globalCount >= 18000) { //18000 = 1 sec
-		time++;
-		globalCount = 0;
-		frequency = 10; //resets frequency
-	}
-}
-*/
+ ISR(TIMER0_COMPA_vect) {
+ timerCounter++;
+ globalCount++;
+ if (globalCount >= 18000) { //18000 = 1 sec
+ time++;
+ globalCount = 0;
+ frequency = 10; //resets frequency
+ }
+ }
+ */
 void outputADC() {
 	if (angle > 200) {
 		PORTD = 0xFF;
@@ -111,8 +111,7 @@ void initCLK() {
 	TIMSK0 = 0x2; //OCIEA enable
 	sei();
 }
-void initLab1()
-{
+void initLab1() {
 	DDRB = 0x00; //enable PORTB for switches
 	PORTB = 0x00;
 	DDRD = 0xFF; //set PORTD as an output
