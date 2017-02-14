@@ -33,7 +33,15 @@ void readADC2() {
 	angle2 = (0.2287 * count2) - 35.307; // angle = 0.2287*count2 - 35.307 is from nbest fit line to angle measurements
 	printf("Angle: %0.1f Count: %0.1f mV: %0.1f \n\r", angle2, count2, mV2); //this is the ADC values for Part 2
 }
+void setTriangle(){
+	if (globalCount >= 18000) { //18000 = 1 sec
+		   if(timerCounter % 2 ==1){
+		     toggle=1;
+		   }else {toggle = 0;}
+		 timerCounter++;
+}
 void DACwrite(){
+	setTriangle();
 	float maxDAC = 4095;//maxvolts set to 5 volts, change if necessary
 	DACcounts= 18000-global;
 	int sig1, sig2;
