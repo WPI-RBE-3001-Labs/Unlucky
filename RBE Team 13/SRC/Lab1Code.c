@@ -20,7 +20,7 @@ int value = 0;
 int higByte = 0;
 float count = 0;
 float mV = 0;
-/*
+
  ISR(TIMER0_COMPA_vect) {
  timerCounter++;
  globalCount++;
@@ -30,7 +30,7 @@ float mV = 0;
  frequency = 10; //resets frequency
  }
  }
- */
+
 void outputADC() {
 	if (angle > 200) {
 		PORTD = 0xFF;
@@ -75,7 +75,8 @@ void readPWM() {
 	if (frequency == 225) //should stop printing after 1 second
 			{
 		printf("%d, %d \n\r", globalCount, i); //print for part 6
-	} else if (butP == 0) {
+	}
+	if (butP == 0) {
 		printf("DC: %f PV: %0.1f F: %d S: %d  \n\r", dutyCycle, count,
 				frequency, i); // This is print for part 3 (state doesnt work correctly)
 	}
@@ -83,14 +84,13 @@ void readPWM() {
 }
 
 void readSwitches() {
-	//seems to be bug with SW2 and SW4 deroing after SW4 is pressed
-	if (PINB == 17) { //sw0
+	if (PINA == 19) { //sw1
 		frequency = 1;
-	} else if (PINB == 18) { //sw1
+	} else if (PINA == 21) { //sw2
 		frequency = 20;
-	} else if (PINB == 20) { //sw2
+	} else if (PINA == 25) { //sw3
 		frequency = 100;
-	} else if (PINB == 0) //sw4 is pressed
+	} else if (PINA == 1) //sw4 is pressed
 			{
 		if (frequency != 225 && butP == 0) //can only press once
 				{
@@ -112,16 +112,16 @@ void initCLK() {
 	sei();
 }
 void initLab1() {
-	DDRB = 0x00; //enable PORTB for switches
-	PORTB = 0x00;
-	DDRD = 0xFF; //set PORTD as an output
+	DDRA = 0x00; //enable PORTD for switches input and output
+	PORTA = 0x00;
+	DDRD = 0xFF;
 	initADC(7); // channel 0 for arm and 7 for lab 1 potentiometer
 	initCLK();
 }
 void Lab1Code() {
-
 	readSwitches();
+	//printf("%d\n\r",PINA);
 	readADC();
 	//readPWM();
-	PINB = 0x00; //resets switch so they always keep correct value
+	//PINB = 0x00; //resets switch so they always keep correct value
 }
