@@ -17,19 +17,11 @@ int higByte2 = 0;
 float count2 = 0;
 float mV2 = 0;
 volatile int global = 0;
-volatile unsigned long timerCounter = 0;
-volatile unsigned long globalCount = 0;
 float DACcounts= 0;
 volatile int toggle = 0;
+
 ISR(TIMER0_COMPA_vect) {
- globalCount++;
- if (globalCount >= 18000) { //18000 = 1 sec
-   if(timerCounter % 2 ==1){
-     toggle=1;
-   }else {toggle = 0;}
- timerCounter++;
- globalCount = 0;
- }
+ global++;
 }
 
 void readADC2() {
@@ -43,14 +35,14 @@ void readADC2() {
 }
 void DACwrite(){
 	float maxDAC = 4095;//maxvolts set to 5 volts, change if necessary
-	DACcounts= 18000-globalCount;
+	DACcounts= 18000-global;
 	int sig1, sig2;
 	float mapfactor = (DACcounts*maxDAC)/18000;
 	if(toggle ==1){//rising for one, decreasing for the other
 		sig1 = (DACcounts*mapfactor);//fall
-		sig2 = globalCount * mapfactor;//rise
+		sig2 = global * mapfactor;//rise
 	}else{
-		sig1 = globalCount * mapfactor;//rise
+		sig1 = global * mapfactor;//rise
 		sig2 = (DACcounts*mapfactor);//fall
 	}
 	setDAC(1, sig1);
@@ -67,6 +59,8 @@ switch (DACn){
 	//command, message same
 	//address is 0001
 //command - need to write to input register N, power it up //0011 0000 //rest of bits are message; 10 bits
+		break;
+}
 }
 void timerInit() {
 	//100hz timer
