@@ -9,18 +9,17 @@
 volatile unsigned long frequency = 10;
 int time = 0;
 volatile unsigned long timerCounter = 0;
-int i = 0;
+volatile int i = 0;
 volatile unsigned long globalCount = 0;
 float dutyCycle = 50; //default duty cycle
 float dutyCycle2 = 50;
 int butP = 0;
-
 float angle = 0;
 int value = 0;
 int higByte = 0;
 float count = 0;
 float mV = 0;
-
+/*
  ISR(TIMER0_COMPA_vect) {
  timerCounter++;
  globalCount++;
@@ -30,7 +29,7 @@ float mV = 0;
  frequency = 10; //resets frequency
  }
  }
-
+*/
 void outputADC() {
 	if (angle > 200) {
 		PORTD = 0xFF;
@@ -72,6 +71,7 @@ void readPWM() {
 	count = value + (higByte << 8);
 	dutyCycle = (count * (100.0 / 1023.0));
 	dutyCycle2 = 100 - dutyCycle;
+	//doesnt keep track of  i correctly
 	if (frequency == 225) //should stop printing after 1 second
 			{
 		printf("%d, %d \n\r", globalCount, i); //print for part 6
@@ -121,7 +121,7 @@ void initLab1() {
 void Lab1Code() {
 	readSwitches();
 	//printf("%d\n\r",PINA);
-	readADC();
-	//readPWM();
+	//readADC();
+	readPWM();
 	//PINB = 0x00; //resets switch so they always keep correct value
 }

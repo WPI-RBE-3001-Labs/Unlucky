@@ -17,11 +17,11 @@ int higByte2 = 0;
 float count2 = 0;
 float mV2 = 0;
 volatile int global = 0;
-/*
+
 ISR(TIMER0_COMPA_vect) {
 	global++;
 }
-*/
+
 
 void readADC2() {
 	ADCSRA = ADCSRA | (1 << ADSC);
