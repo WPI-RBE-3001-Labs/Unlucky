@@ -17,11 +17,12 @@ int higByte2 = 0;
 float count2 = 0;
 float mV2 = 0;
 volatile int global = 0;
-float DACcounts= 0;
+volatile int secondaryCount = 0;
+float DACcounts = 0;
 volatile int toggle = 0;
 
 ISR(TIMER0_COMPA_vect) {
- global++;
+	global++;
 }
 
 void readADC2() {
@@ -33,43 +34,35 @@ void readADC2() {
 	angle2 = (0.2287 * count2) - 35.307; // angle = 0.2287*count2 - 35.307 is from nbest fit line to angle measurements
 	printf("Angle: %0.1f Count: %0.1f mV: %0.1f \n\r", angle2, count2, mV2); //this is the ADC values for Part 2
 }
-void setTriangle(){
-	if (globalCount >= 18000) { //18000 = 1 sec
-		   if(timerCounter % 2 ==1){
-		     toggle=1;
-		   }else {toggle = 0;}
-		 timerCounter++;
+
+// our timer is 100Hz not 1Hz for this lab. Youll have to change this to match that.
+void setTriangle() {
+	if (global >= 18000) { //18000 = 1 sec
+		if (secondaryCount % 2 == 1) {
+			toggle = 1;
+		} else {
+			toggle = 0;
+		}
+		secondaryCount++;
+	}
 }
-void DACwrite(){
+void DACwrite() {
 	setTriangle();
-	float maxDAC = 4095;//maxvolts set to 5 volts, change if necessary
-	DACcounts= 18000-global;
+	float maxDAC = 4095; //maxvolts set to 5 volts, change if necessary
+	DACcounts = 18000 - global;
 	int sig1, sig2;
-	float mapfactor = (DACcounts*maxDAC)/18000;
-	if(toggle ==1){//rising for one, decreasing for the other
-		sig1 = (DACcounts*mapfactor);//fall
-		sig2 = global * mapfactor;//rise
-	}else{
-		sig1 = global * mapfactor;//rise
-		sig2 = (DACcounts*mapfactor);//fall
+	float mapfactor = (DACcounts * maxDAC) / 18000;
+	if (toggle == 1) { //rising for one, decreasing for the other
+		sig1 = (DACcounts * mapfactor); //fall
+		sig2 = global * mapfactor; //rise
+	} else {
+		sig1 = global * mapfactor; //rise
+		sig2 = (DACcounts * mapfactor); //fall
 	}
 	setDAC(1, sig1);
 	setDAC(2, sig2);
 }
-void setDAC(int DACn, int SPIval){
-switch (DACn){
-	case 0:
-	//command is 0011
-	//address is 0000
-	//message is SPIval
-	break;
-	case 1:
-	//command, message same
-	//address is 0001
-//command - need to write to input register N, power it up //0011 0000 //rest of bits are message; 10 bits
-		break;
-}
-}
+
 void timerInit() {
 	//100hz timer
 	TIMSK0 = (0 << OCIE0B) | (1 << OCIE0A) | //Enable compare A interrupt
@@ -87,10 +80,13 @@ void timerInit() {
 void initLab2() {
 	timerInit();
 	initADC(2);
-	EN0_HIGH; // 0 degrees points towards the long base
-	EN1_HIGH;
+	EN0_HIGH
+	; // 0 degrees points towards the long base
+	EN1_HIGH
+	;
 }
 void Lab2Code() {
 	readADC2();
+	DACwrite();
 }
 

@@ -29,7 +29,7 @@ float mV = 0;
  frequency = 10; //resets frequency
  }
  }
-*/
+ */
 void outputADC() {
 	if (angle > 200) {
 		PORTD = 0xFF;

@@ -31,4 +31,3 @@ void initADC(int channel) {
 
 	DDRB = 0xFF; //Set Port as output
 }
-
