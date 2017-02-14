@@ -17,11 +17,20 @@ int higByte2 = 0;
 float count2 = 0;
 float mV2 = 0;
 volatile int global = 0;
-
+volatile unsigned long timerCounter = 0;
+volatile unsigned long globalCount = 0;
+float DACcounts= 0;
+volatile int toggle = 0;
 ISR(TIMER0_COMPA_vect) {
-	global++;
+ globalCount++;
+ if (globalCount >= 18000) { //18000 = 1 sec
+   if(timerCounter % 2 ==1){
+     toggle=1;
+   }else {toggle = 0;}
+ timerCounter++;
+ globalCount = 0;
+ }
 }
-
 
 void readADC2() {
 	ADCSRA = ADCSRA | (1 << ADSC);
@@ -31,6 +40,33 @@ void readADC2() {
 	mV2 = (count2 * ((5.0 * 10 * 10 * 10) / 1023.0));
 	angle2 = (0.2287 * count2) - 35.307; // angle = 0.2287*count2 - 35.307 is from nbest fit line to angle measurements
 	printf("Angle: %0.1f Count: %0.1f mV: %0.1f \n\r", angle2, count2, mV2); //this is the ADC values for Part 2
+}
+void DACwrite(){
+	float maxDAC = 4095;//maxvolts set to 5 volts, change if necessary
+	DACcounts= 18000-globalCount;
+	int sig1, sig2;
+	float mapfactor = (DACcounts*maxDAC)/18000;
+	if(toggle ==1){//rising for one, decreasing for the other
+		sig1 = (DACcounts*mapfactor);//fall
+		sig2 = globalCount * mapfactor;//rise
+	}else{
+		sig1 = globalCount * mapfactor;//rise
+		sig2 = (DACcounts*mapfactor);//fall
+	}
+	setDAC(1, sig1);
+	setDAC(2, sig2);
+}
+void setDAC(int DACn, int SPIval){
+switch (DACn){
+	case 0:
+	//command is 0011
+	//address is 0000
+	//message is SPIval
+	break;
+	case 1:
+	//command, message same
+	//address is 0001
+//command - need to write to input register N, power it up //0011 0000 //rest of bits are message; 10 bits
 }
 void timerInit() {
 	//100hz timer
