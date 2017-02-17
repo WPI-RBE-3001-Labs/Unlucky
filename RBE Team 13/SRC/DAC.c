@@ -13,7 +13,7 @@ void setDAC(int DACn, int SPIval) {
 	unsigned char p3 = 0;
 	unsigned long temp = 0;
 	p1 = (0x30 | DACn); // write to and update DACn
-	if (SPIval >= 4096){ // over max val
+	if (SPIval >= 4096) { // over max val
 		SPIval = 4095;
 	}
 	//DAC_SS_ddr = OUTPUT; // portD4 set to output

@@ -6,27 +6,42 @@
  */
 #include "RBELib/RBELib.h"
 
-void initSPI() {
+void initSPI(void) {
+
 	SPI_MASTER_SS = OUTPUT;
 	SPIDDRbits._MOSI = OUTPUT;
 	SPIDDRbits._SCK = OUTPUT;
 	SPIDDRbits._MISO = INPUT;
+
+	//Bit 7: Disable interrupts
+	//Bit 6: Enable the SPI lines
+	//Bit 5: MSB transmitted first
+	//Bit 4: Master mode
+	//Bit 3: CLK low when idle
+	//Bit 2: Sample on leading edge of signal
+	//Bits 1 - 0: 128 CLK prescaler
 	SPCR = 0x53;
-	DAC_SS_ddr = OUTPUT;
-	DAC_SS = 0;
+	DAC_SS_ddr = 1;
+
 	DAC_SS = 1;
+	DAC_SS = 0;  //toggle DAC
+	DAC_SS = 1;
+
 	DDRDbits._P7 = OUTPUT;
-	PORTDbits._P7=1;
+	PORTDbits._P7 = 1;
+	//Encoders SS lines = outputs
 	ENCODER_SS_0_ddr = OUTPUT;
 	ENCODER_SS_1_ddr = OUTPUT;
-	ENCODER_SS_0 = 1;
-	ENCODER_SS_1 = 1;
+	//Deassert
+	ENCODER_SS_0 = HIGH;
+	ENCODER_SS_1 = HIGH;
 }
 
 unsigned char spiTransceive(BYTE data) {
 	//start transmission
 	SPDR = data;
 	//wait for transmission to complete
-	while (!(SPSR & (1 << SPIF)));
+	while (!(SPSR & (1 << SPIF)))
+		;
 	return SPDR;
 }

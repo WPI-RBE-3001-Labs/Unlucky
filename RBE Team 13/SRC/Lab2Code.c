@@ -6,11 +6,6 @@
  */
 #include "RBELib/RBELib.h"
 
-#define EN0_LOW PORTC &= ~(1<<PORTC5);
-#define EN0_HIGH PORTC &= (1<<PORTC5);
-#define EN1_LOW PORTC &= ~(1<<PORTC4);
-#define EN1_HIGH PORTC &= (1<<PORTC4);
-#define FREQUENCY 1800
 float angle2 = 0;
 int value2 = 0;
 int higByte2 = 0;
@@ -32,23 +27,41 @@ void readADC2() {
 	count2 = value2 + (higByte2 << 8);
 	mV2 = (count2 * ((5.0 * 10 * 10 * 10) / 1023.0));
 	angle2 = (0.2287 * count2) - 35.307; // angle = 0.2287*count2 - 35.307 is from nbest fit line to angle measurements
-	//printf("Angle: %0.1f Count: %0.1f mV: %0.1f \n\r", angle2, count2, mV2); //this is the ADC values for Part 2
+	printf("Angle: %0.1f Count: %0.1f mV: %0.1f \n\r", angle2, count2, mV2); //this is the ADC values for Part 2
 }
 
-void DACwrite() {
-	float maxDAC = 4095;
-	int frequency = 1800;
-	int sig1 = 0, sig2 = 0;
-	float toDAC = (global * maxDAC) / frequency;
-	if(global<=(frequency/2)){//rise
-		sig1 = toDAC;
-	}else if(global>(frequency/2)){//fall
-		sig1 = maxDAC-toDAC;
-		if(global>=frequency){
-			global = 0;
+int up = 1;
+int sig0 = 0;
+int sig1 = 4000;
+void Triangle() {
+	if (up == 1) //going up
+			{
+		if (sig0 > 4000) //approaching max of DAC
+				{
+			up = 0; //go down
+			sig0 = sig0 - 20;
+			sig1 = sig1 + 20;
+		} else //Keep going up
+		{
+			sig0 = sig0 + 20;
+			sig1 = sig1 - 20;
 		}
 	}
-	setDAC(0, sig1);
+	if (up == 0) //going down
+			{
+		if (sig0 < 100) //approaching min of DAC
+				{
+			up = 1; //go up
+			sig0 = sig0 + 20;
+			sig1 = sig1 - 20;
+		} else //Keep going down
+		{
+			sig0 = sig0 - 20;
+			sig1 = sig1 + 20;
+		}
+	}
+	setDAC(0, sig0);
+	setDAC(1, sig1);
 }
 
 void timerInit() {
@@ -70,14 +83,10 @@ void initLab2() {
 	timerInit();
 	initADC(2);
 	initSPI();
-	EN0_HIGH
-	; // 0 degrees points towards the long base
-	EN1_HIGH
-	;
 }
 //Lab 2 Code
 void Lab2Code() {
 	readADC2();
-	DACwrite();
+	Triangle();
 }
 
