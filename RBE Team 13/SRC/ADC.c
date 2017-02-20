@@ -31,3 +31,15 @@ void initADC(int channel) {
 
 	DDRB = 0xFF; //Set Port as output
 }
+unsigned short readADC2(int channel) {
+	// select the corresponding channel 0~7
+	// ANDing with '7' will always keep the value
+	// of 'channel' between 0 and 7
+	channel &= 0b00000111;  // AND operation with 7
+	ADMUX = (ADMUX & 0xF8)|channel;     // clears the bottom 3 bits before ORing
+	ADCSRA = ADCSRA | (1 << ADSC);
+	while(!(ADCSRA & (1<<ADIF)));
+	//Clear ADIF by writing one to it
+	ADCSRA = ADCSRA | (1<<ADIF);
+	return ADC;
+}

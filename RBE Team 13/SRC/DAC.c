@@ -22,8 +22,9 @@ void setDAC(int DACn, int SPIval) {
 	p2 = temp;
 	temp = SPIval & 0x000F;
 	temp = temp << 4; //bit shifted 4 bits left, 0 A B C -- > A B [C 0]
-	p3 = temp; // test
-	DAC_SS = 0; //turn DAC on?
+	p3 = temp;
+
+	DAC_SS = 0; //turn DAC on
 
 	spiTransceive(p1);
 	spiTransceive(p2);

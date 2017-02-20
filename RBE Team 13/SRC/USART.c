@@ -29,13 +29,17 @@ void debugUSARTInit(unsigned long baudrate) {
 	UCSR1C = 0x06;
 
 }
+void putCharDebug(char byteToSend){
+  //Wait on UDRE1 bit
+  while(!(UCSR1A&(1<<UDRE1)));
+  //Fill the buffer
+  UDR1 = byteToSend;
 
-void putCharDebug(char byteToSend) {
-	while (!(UCSR1A & 0x20))
-		;
-	UDR1 = byteToSend;
 }
 
 unsigned char getCharDebug(void) {
-	return 'a';
+    // Wait for incoming data
+    while ( !(UCSR1A & (_BV(RXC1))) );
+    // Return the data
+    return UDR1;
 }

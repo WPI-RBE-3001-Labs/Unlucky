@@ -8,6 +8,7 @@ C_SRCS += \
 ../SRC/DAC.c \
 ../SRC/Lab1Code.c \
 ../SRC/Lab2Code.c \
+../SRC/PID.c \
 ../SRC/SPI.c \
 ../SRC/USART.c \
 ../SRC/main.c 
@@ -17,6 +18,7 @@ OBJS += \
 ./SRC/DAC.o \
 ./SRC/Lab1Code.o \
 ./SRC/Lab2Code.o \
+./SRC/PID.o \
 ./SRC/SPI.o \
 ./SRC/USART.o \
 ./SRC/main.o 
@@ -26,6 +28,7 @@ C_DEPS += \
 ./SRC/DAC.d \
 ./SRC/Lab1Code.d \
 ./SRC/Lab2Code.d \
+./SRC/PID.d \
 ./SRC/SPI.d \
 ./SRC/USART.d \
 ./SRC/main.d 

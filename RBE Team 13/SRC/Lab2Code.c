@@ -20,14 +20,24 @@ ISR(TIMER0_COMPA_vect) {
 	global++;
 }
 
-void readADC2() {
-	ADCSRA = ADCSRA | (1 << ADSC);
-	value2 = ADCL;
-	higByte2 = ADCH;
-	count2 = value2 + (higByte2 << 8);
-	mV2 = (count2 * ((5.0 * 10 * 10 * 10) / 1023.0));
-	angle2 = (0.2287 * count2) - 35.307; // angle = 0.2287*count2 - 35.307 is from nbest fit line to angle measurements
-	printf("Angle: %0.1f Count: %0.1f mV: %0.1f \n\r", angle2, count2, mV2); //this is the ADC values for Part 2
+float ADCData(int channel)
+{
+		readADC2(channel);
+		value2 = ADCL;
+		higByte2 = ADCH;
+		count2 = value2 + (higByte2 << 8);
+		//mV2 = (count2 * ((5.0 * 10 * 10 * 10) / 1023.0));
+		if(channel == 2)
+		{
+			angle2 = (0.2287 * count2) - 35.307;
+			return angle2;
+		}
+		if(channel == 3)
+		{
+			angle2 = (0.2393 * count2) - 55.305;
+
+			return angle2;
+		}
 }
 
 int up = 1;
@@ -39,12 +49,12 @@ void Triangle() {
 		if (sig0 > 4000) //approaching max of DAC
 				{
 			up = 0; //go down
-			sig0 = sig0 - 20;
-			sig1 = sig1 + 20;
+			sig0 = sig0 - 40;
+			sig1 = sig1 + 40;
 		} else //Keep going up
 		{
-			sig0 = sig0 + 20;
-			sig1 = sig1 - 20;
+			sig0 = sig0 + 40;
+			sig1 = sig1 - 40;
 		}
 	}
 	if (up == 0) //going down
@@ -52,16 +62,17 @@ void Triangle() {
 		if (sig0 < 100) //approaching min of DAC
 				{
 			up = 1; //go up
-			sig0 = sig0 + 20;
-			sig1 = sig1 - 20;
+			sig0 = sig0 + 40;
+			sig1 = sig1 - 40;
 		} else //Keep going down
 		{
-			sig0 = sig0 - 20;
-			sig1 = sig1 + 20;
+			sig0 = sig0 - 40;
+			sig1 = sig1 + 40;
 		}
 	}
 	setDAC(0, sig0);
 	setDAC(1, sig1);
+	//printf("DAC0 = %u, DAC1 = %u\n\r",sig0,sig1);
 }
 
 void timerInit() {
@@ -86,7 +97,11 @@ void initLab2() {
 }
 //Lab 2 Code
 void Lab2Code() {
-	readADC2();
-	Triangle();
+	printf("AngleL: %0.1f, AngleH: %0.1f\r\n",ADCData(2),ADCData(3));
+	//Triangle();
+	setDAC(0,3000);
+	setDAC(1,0);
+	setDAC(2,3000);
+	setDAC(3,0);
 }
 

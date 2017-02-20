@@ -9,9 +9,9 @@
 void initSPI(void) {
 
 	SPI_MASTER_SS = OUTPUT;
-	SPIDDRbits._MOSI = OUTPUT;
-	SPIDDRbits._SCK = OUTPUT;
-	SPIDDRbits._MISO = INPUT;
+	SPI_MOSI = OUTPUT;
+	SPI_SCK = OUTPUT;
+	SPI_MISO = INPUT;
 
 	//Bit 7: Disable interrupts
 	//Bit 6: Enable the SPI lines
@@ -20,12 +20,14 @@ void initSPI(void) {
 	//Bit 3: CLK low when idle
 	//Bit 2: Sample on leading edge of signal
 	//Bits 1 - 0: 128 CLK prescaler
-	SPCR = 0x53;
+
 	DAC_SS_ddr = 1;
 
 	DAC_SS = 1;
 	DAC_SS = 0;  //toggle DAC
 	DAC_SS = 1;
+
+	SPCR = 0x53;
 
 	DDRDbits._P7 = OUTPUT;
 	PORTDbits._P7 = 1;
@@ -43,5 +45,6 @@ unsigned char spiTransceive(BYTE data) {
 	//wait for transmission to complete
 	while (!(SPSR & (1 << SPIF)))
 		;
+	unsigned char dataIn = SPDR;
 	return SPDR;
 }
