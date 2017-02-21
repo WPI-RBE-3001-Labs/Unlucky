@@ -37,8 +37,8 @@ ISR(TIMER0_COMPA_vect) {
 		systemTime++;
 		intTime++;
 		if(intTime >=10){
-			updatePIDLink('H', highSetP);
-			updatePIDLink('L', lowSetP);
+			updatePID('H', highSetP);
+			updatePID('L', lowSetP);
 		}
 	}
 }
@@ -124,7 +124,7 @@ void timerInit() {
 }
 
 //PID
-void updatePIDLink(char link, int setPoint){
+void updatePID(char link, int setPoint){
 	switch(link){
 	case 'H':
 		if(FALSE){
@@ -176,6 +176,7 @@ void Lab2Code() {
 	//setDAC(1,0);
 	//setDAC(2,3000);
 	//setDAC(3,0);
+
 	lowSetP = angleToADCLow(0);
 	highSetP = angleToADCHigh(90);
 	printf("adcL: %d\n\r",lowSetP);
