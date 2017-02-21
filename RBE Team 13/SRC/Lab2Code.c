@@ -20,10 +20,9 @@ volatile unsigned long intTime;
 volatile double globalVal = 9;
 volatile long highLinkErr;
 volatile long lowLinkErr;
-
-volatile int highSetP;
-volatile int lowSetP;
-
+unsigned int PIDcheck = FALSE;
+volatile int highSetP = 90;
+volatile int lowSetP = 90;
 
 ISR(TIMER0_COMPA_vect) {
 	global++;
@@ -32,12 +31,10 @@ ISR(TIMER0_COMPA_vect) {
 		systemTime++;
 		intTime++;
 		if(intTime >=10){
-			updatePID('H', highSetP);
-			updatePID('L', lowSetP);
+			PIDcheck = TRUE;
 		}
 	}
 }
-
 
 float ADCData(int channel)
 {
@@ -89,8 +86,8 @@ void Triangle() {
 			sig1 = sig1 + 40;
 		}
 	}
-	setDAC(0, sig0);
-	setDAC(1, sig1);
+	setDAC(2, sig0);
+	setDAC(3, sig1);
 	//printf("DAC0 = %u, DAC1 = %u\n\r",sig0,sig1);
 }
 
@@ -156,12 +153,17 @@ void initLab2() {
 }
 //Lab 2 Code
 void Lab2Code() {
+	//printf("Hello");
 	printf("AngleL: %0.1f, AngleH: %0.1f\r\n",ADCData(2),ADCData(3));
-	Triangle();
-	//setDAC(0,3000);
-	//setDAC(1,0);
-	//setDAC(2,3000);
-	//setDAC(3,0);
+	if(PIDcheck){
+		updatePID('H', highSetP);
+		updatePID('L', lowSetP);
+		PIDcheck = FALSE;
+	}
+	/*setDAC(0,3000);
+	setDAC(0,0);
+	setDAC(2,3000);
+	setDAC(3,0);*/
 
 }
 
