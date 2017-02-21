@@ -24,11 +24,6 @@ volatile long lowLinkErr;
 volatile int highSetP;
 volatile int lowSetP;
 
-volatile int offSetlow = 250;
-volatile double adctoanglelow = 3.66;
-
-volatile int offSethigh=250;
-volatile double adctoanglehigh = 4.16;
 
 ISR(TIMER0_COMPA_vect) {
 	global++;
@@ -43,15 +38,6 @@ ISR(TIMER0_COMPA_vect) {
 	}
 }
 
-int angleToADCLow(int angle){
-	double adclow = (angle*adctoanglelow)+offSetlow;
-	return adclow;
-}
-
-int angleToADCHigh(int angle){
-	double adchigh = (angle*adctoanglehigh) +offSethigh;
-	return adchigh;
-}
 
 float ADCData(int channel)
 {
@@ -171,19 +157,11 @@ void initLab2() {
 //Lab 2 Code
 void Lab2Code() {
 	printf("AngleL: %0.1f, AngleH: %0.1f\r\n",ADCData(2),ADCData(3));
-	//Triangle();
+	Triangle();
 	//setDAC(0,3000);
 	//setDAC(1,0);
 	//setDAC(2,3000);
 	//setDAC(3,0);
 
-	lowSetP = angleToADCLow(0);
-	highSetP = angleToADCHigh(90);
-	printf("adcL: %d\n\r",lowSetP);
-	printf("adcH: %d \n\r",highSetP);
-	lowSetP=angleToADCLow(90);
-	highSetP=angleToADCHigh(0);
-	printf("adcL: %d\n\r",lowSetP);
-	printf("adcH: %d \n\r",highSetP);
 }
 
