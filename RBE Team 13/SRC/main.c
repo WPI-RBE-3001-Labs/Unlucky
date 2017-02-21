@@ -5,7 +5,6 @@
  */
 #include "RBELib/RBELib.h"
 #include <stdlib.h>
-
 int main(void) {
 	initRBELib(); //Setup printf() and setServo()
 	debugUSARTInit(115200); //Initialize UART

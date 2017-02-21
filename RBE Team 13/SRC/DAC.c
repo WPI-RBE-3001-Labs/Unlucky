@@ -7,7 +7,6 @@
 #include "RBELib/RBELib.h"
 
 void setDAC(int DACn, int SPIval) {
-
 	unsigned char p1 = 0;
 	unsigned char p2 = 0;
 	unsigned char p3 = 0;
