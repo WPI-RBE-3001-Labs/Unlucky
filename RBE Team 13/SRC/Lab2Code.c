@@ -154,8 +154,8 @@ void initLab2() {
 	timerInit();
 	initADC(2);
 	initSPI();
-	setConst('H', 200,65, 200);
-	setConst('L', 100,0,0);
+	setConst('H', 120,40,35);
+	setConst('L', 120,40,35);
 }
 //Lab 2 Code
 void Lab2Code() {
