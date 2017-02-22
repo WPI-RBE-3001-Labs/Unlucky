@@ -8,15 +8,18 @@
 
 float angle2 = 0;
 int value2 = 0;
+
 int higByte2 = 0;
 float count2 = 0;
 float mV2 = 0;
+
 volatile int global = 0;
 volatile int secondaryCount = 0;
 float DACcounts = 0;
 volatile int toggle = 0;
-volatile unsigned long systemTime;
+volatile unsigned long systemTime =0;
 volatile unsigned long intTime;
+
 volatile double globalVal = 9;
 volatile long highLinkErr;
 volatile long lowLinkErr;
@@ -116,6 +119,7 @@ void updatePID(char link, int setPoint){
 		}
 		else{
 			long pidNum = calcPID('H', setPoint, ADCData(3));
+			//printf("pidNum: %0.1f\n\r", pidNum);
 			if(pidNum>=0){
 				setDAC(2, pidNum);
 				setDAC(3,0);
@@ -150,12 +154,15 @@ void initLab2() {
 	timerInit();
 	initADC(2);
 	initSPI();
+	setConst('H', 200,65, 200);
+	setConst('L', 100,0,0);
 }
 //Lab 2 Code
 void Lab2Code() {
 	//printf("Hello");
-	printf("AngleL: %0.1f, AngleH: %0.1f\r\n",ADCData(2),ADCData(3));
+	//printf("AngleL: %0.1f, AngleH: %0.1f\r\n",ADCData(2),ADCData(3));
 	if(PIDcheck){
+		printf("AngleL: %0.1f, AngleH: %0.1f time: %0.1u\r\n",ADCData(2),ADCData(3), systemTime);
 		updatePID('H', highSetP);
 		updatePID('L', lowSetP);
 		PIDcheck = FALSE;
