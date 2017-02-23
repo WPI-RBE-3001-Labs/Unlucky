@@ -6,23 +6,14 @@
  */
 #include "RBELib/RBELib.h"
 
-float angle2 = 0;
-int value2 = 0;
-
-int higByte2 = 0;
 float count2 = 0;
-float mV2 = 0;
 
 volatile int global = 0;
 volatile int secondaryCount = 0;
-float DACcounts = 0;
-volatile int toggle = 0;
 volatile unsigned long systemTime =0;
 volatile unsigned long intTime;
 
 volatile double globalVal = 9;
-volatile long highLinkErr;
-volatile long lowLinkErr;
 unsigned int PIDcheck = FALSE;
 volatile int highSetP = 90;
 volatile int lowSetP = 90;
@@ -42,20 +33,14 @@ ISR(TIMER0_COMPA_vect) {
 float ADCData(int channel)
 {
 		readADC2(channel);
-		value2 = ADCL;
-		higByte2 = ADCH;
-		count2 = value2 + (higByte2 << 8);
-		//mV2 = (count2 * ((5.0 * 10 * 10 * 10) / 1023.0));
+		count2 = ADCL + (ADCH << 8);
 		if(channel == 2)
 		{
-			angle2 = (0.2287 * count2) - 35.307;
-			return angle2;
+			return (0.2287 * count2) - 35.307;
 		}
 		if(channel == 3)
 		{
-			angle2 = (0.2393 * count2) - 55.305;
-
-			return angle2;
+			return (0.2393 * count2) - 55.305;
 		}
 }
 
@@ -155,22 +140,16 @@ void initLab2() {
 	initADC(2);
 	initSPI();
 	setConst('H', 120,40,35);
-	setConst('L', 120,40,35);
+	//setConst('L', 120,40,35);
 }
 //Lab 2 Code
 void Lab2Code() {
-	//printf("Hello");
-	//printf("AngleL: %0.1f, AngleH: %0.1f\r\n",ADCData(2),ADCData(3));
 	if(PIDcheck){
 		printf("AngleL: %0.1f, AngleH: %0.1f time: %0.1u\r\n",ADCData(2),ADCData(3), systemTime);
 		updatePID('H', highSetP);
-		updatePID('L', lowSetP);
+		//updatePID('L', lowSetP);
 		PIDcheck = FALSE;
 	}
-	/*setDAC(0,3000);
-	setDAC(0,0);
-	setDAC(2,3000);
-	setDAC(3,0);*/
 
 }
 
