@@ -134,17 +134,34 @@ void updatePID(char link, int setPoint){
 		break;
 	}
 }
+void setAngle() {
+	if (PIND == 153) { //sw1
+		highSetP = 0;
+	} else if (PIND == 154) { //sw2
+		highSetP = 30;
+	} else if (PIND == 155) { //sw3
+		highSetP = 45;
+	} else if (PIND == 156) //sw4 is pressed
+			{
+		highSetP = 60;
+		}
+	else
+	{
+		highSetP = 90;
+	}
+}
 //Lab2 Initialization
 void initLab2() {
 	timerInit();
 	initADC(2);
 	initSPI();
-	setConst('H', 120,40,35);
+	setConst('H', 120,0,0);
 	//setConst('L', 120,40,35);
 }
 //Lab 2 Code
 void Lab2Code() {
 	if(PIDcheck){
+		setAngle();
 		printf("AngleL: %0.1f, AngleH: %0.1f time: %0.1u\r\n",ADCData(2),ADCData(3), systemTime);
 		updatePID('H', highSetP);
 		//updatePID('L', lowSetP);
