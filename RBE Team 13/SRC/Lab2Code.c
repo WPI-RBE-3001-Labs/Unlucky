@@ -16,7 +16,7 @@ volatile unsigned long intTime;
 volatile double globalVal = 9;
 unsigned int PIDcheck = FALSE;
 volatile int highSetP = 90;
-volatile int lowSetP = 90;
+volatile int lowSetP = 60;
 
 ISR(TIMER0_COMPA_vect) {
 	global++;
@@ -36,11 +36,27 @@ float ADCData(int channel)
 		count2 = ADCL + (ADCH << 8);
 		if(channel == 2)
 		{
-			return (0.2287 * count2) - 35.307;
+			return (0.2211 * count2) - 36.244;
 		}
-		if(channel == 3)
+		else if(channel == 3)
 		{
-			return (0.2393 * count2) - 55.305;
+			return (0.2311 * count2) - 59.14;
+		}
+		else if(channel == 6)
+		{
+			float calcCurrent(int val) {
+				//The resistor across the sensor is .5Ohms
+				float VCC = 5;
+				float offset = 2.65;
+				float gain = 20;
+				float curr = ((float) (val * VCC / 1023) - offset) / gain / 0.05;
+				//printf("%f \n\r", curr);
+				return curr;
+			}
+		}
+		else
+		{
+			return count2;
 		}
 }
 
@@ -156,15 +172,16 @@ void initLab2() {
 	initADC(2);
 	initSPI();
 	setConst('H', 120,0,0);
-	//setConst('L', 120,40,35);
+	setConst('L', 120,0,0);
 }
 //Lab 2 Code
 void Lab2Code() {
 	if(PIDcheck){
 		setAngle();
-		printf("AngleL: %0.1f, AngleH: %0.1f time: %0.1u\r\n",ADCData(2),ADCData(3), systemTime);
+		//printf("AngleL: %0.1f, AngleH: %0.1f time: %0.1u\r\n",ADCData(2),ADCData(3), systemTime);
+		printf("Sensor: %0.1f \r\n", ADCData(4));
 		updatePID('H', highSetP);
-		//updatePID('L', lowSetP);
+		updatePID('L', lowSetP);
 		PIDcheck = FALSE;
 	}
 
