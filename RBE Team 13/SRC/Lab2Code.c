@@ -17,6 +17,7 @@ volatile double globalVal = 9;
 unsigned int PIDcheck = FALSE;
 volatile int highSetP = 90;
 volatile int lowSetP = 60;
+int state = 0;
 
 ISR(TIMER0_COMPA_vect) {
 	global++;
@@ -42,14 +43,16 @@ float ADCData(int channel)
 		{
 			return (0.2311 * count2) - 59.14;
 		}
+		//current sense
 		else if(channel == 6)
 		{
 			float calcCurrent(int val) {
 				//The resistor across the sensor is .5Ohms
 				float VCC = 5;
-				float offset = 2.65;
-				float gain = 20;
-				float curr = ((float) (val * VCC / 1023) - offset) / gain / 0.05;
+				float offset = 2.65;//test for this. This is probably wrong
+				float gain = 20; // i think this right? check the data sheet again for me
+				float Resolution = VCC/1023;
+				float curr = ((float) (val * Resolution) - offset) / gain / 0.05;
 				//printf("%f \n\r", curr);
 				return curr;
 			}
@@ -150,6 +153,20 @@ void updatePID(char link, int setPoint){
 		break;
 	}
 }
+//To work on
+void XY()
+{
+	//figure out kinematics
+	//zero should be low link 60-degree and high link 90-degree?
+}
+//NEW
+void stopMotors()
+{
+	setDAC(0,0);
+	setDAC(1,0);
+	setDAC(2,0);
+	setDAC(3,0);
+}
 void setAngle() {
 	if (PIND == 153) { //sw1
 		highSetP = 0;
@@ -171,18 +188,63 @@ void initLab2() {
 	timerInit();
 	initADC(2);
 	initSPI();
+	//added this function (SEE ABOVE)
+	stopMotors(); //hopefully this stops the startup craziness? comment this out if it breaks things
+	//////////////
 	setConst('H', 120,0,0);
 	setConst('L', 120,0,0);
 }
 //Lab 2 Code
 void Lab2Code() {
 	if(PIDcheck){
+		//@Lucy try and get the final setup working.
+		//IR sensor location, gripper and belt running
+		//hook up the current sense on the high link to analog 6 and see what that current equation gives (i guessed)
 		setAngle();
-		//printf("AngleL: %0.1f, AngleH: %0.1f time: %0.1u\r\n",ADCData(2),ADCData(3), systemTime);
-		printf("Sensor: %0.1f \r\n", ADCData(4));
+		printf("Sensor: %0.1f \r\n", ADCData(4)); // IR sensor reading. WE NEED TO FIND A WAY OF ATTACHING IT SOMEWHERE
 		updatePID('H', highSetP);
 		updatePID('L', lowSetP);
 		PIDcheck = FALSE;
+		///i think this will be able to control the servos. Input: Channel, value(idk what this is so try some stuff) --> from the setServo.c file in RBE LIB
+		setServo(0,0); // check channel for belt (find value)
+		setServo(0,0); //check channel for gripper (find value)
+
+		//state space for final. We can work on this as we go
+		/*
+		switch(state)
+		{
+			case 0:
+				//check IR sensor
+				float IR = ADCData(4);
+				if(IR >= 0) // change to be the correct value
+				{
+					state = 1;
+				}
+				break;
+			case 1:
+				//move arm down
+				break;
+			case 2:
+				//gripper
+				break;
+			case 3:
+				//move arm up
+				break;
+			case 4:
+				//determine weight --> go to case 5 or 6
+				break;
+			case 5:
+				//put weight on left
+				//return to state 0
+				break;
+			case 6:
+				//put weight on right
+				//return to state 0
+				break;
+
+		}
+		*/
+
 	}
 
 }
