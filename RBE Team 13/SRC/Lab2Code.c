@@ -5,6 +5,9 @@
  *      Author: sangu
  */
 #include "RBELib/RBELib.h"
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
 //VARS
 float count2 = 0;
 
@@ -19,24 +22,23 @@ volatile int highSetP = 90;
 volatile int lowSetP = 60;
 int state = 0;
 //TASK LIST
-/* 1. try and get the final setup working.
-		-mechanically in place; servos not working
-	2. IR sensor location running
-		-getting value, started detection function
-		-function : objDetect works, needs tuning
-	3. gripper and belt running
-		- SERVOS NOT WORKING
-		-Tried values in a range from 0 to 1000
-		-It's very possible I set this up wrong
-	4. hook up the current sense on the high
-		- done
-	5. see what that current equation gives
-		-done, small error of abt .0014 A
+/* 	Done today:
+	1. getAngs function - NEEDS TO BE TESTED - Also program is Error1 ing, not sure
+	why - please check
+	2. Transforms were calculated
+	3. cases 5 and 6 written, need to be tested when arm is fixed
+	4. Moved triangle function into DAC.c
+	5. Cases 1,2,3 written, need to be tested when arm is fixed
+	6. Made solidworks sketch for joint positions - will be included in report
+
 	TODO Next steps:
-	1. Servos working
-	2. Figure out transforms and resultant joint angles
-	3. Figure out conveyor speed so that we can grab at the correct time
-	4. Kinematics stuff
+	1. FIX ARM
+	2. Figure out conveyor speed so that we can grab at the correct time
+	3. Servos working
+	4. Map IR to inches
+	5. Get weight detection working
+	6. Get weights for testing
+
 */
 
 //Timer Functions
@@ -66,6 +68,20 @@ void timerInit() {
 	OCR0A = 179; //should set to 100hz timer
 	sei();
 }
+
+
+//Angle Calculations//////////
+double radtoDeg(double ang){
+	return ang*(3.1459/180);
+}
+//TEST
+void getAngs(double px, double py){
+	highSetP = radtoDeg(acos((px*px + py*py - 72)/72));
+	double beta = radtoDeg(atan(py/px));
+	double gamma = radtoDeg(acos((px*px +py*py)/(12*sqrt(px*px+py*py))));
+	lowSetP = beta + gamma;
+}
+
 
 //ADC Functions/////////
 float ADCData(int channel){
@@ -109,35 +125,6 @@ int objDetect(){
 	}
 }
 //DAC Functions///////////////////////
-int up = 1;
-int sig0 = 0;
-int sig1 = 4000;
-void Triangle() {
-	if (up == 1){ //going up
-		if (sig0 > 4000){ //approaching max of DAC
-			up = 0; //go down
-			sig0 = sig0 - 40;
-			sig1 = sig1 + 40;
-		} else {//Keep going up
-			sig0 = sig0 + 40;
-			sig1 = sig1 - 40;
-		}
-	}
-	if (up == 0){ //going down
-		if (sig0 < 100){ //approaching min of DAC
-			up = 1; //go up
-			sig0 = sig0 + 40;
-			sig1 = sig1 - 40;
-		} else {//Keep going down
-			sig0 = sig0 - 40;
-			sig1 = sig1 + 40;
-		}
-	}
-	setDAC(2, sig0);
-	setDAC(3, sig1);
-	//printf("DAC0 = %u, DAC1 = %u\n\r",sig0,sig1);
-}
-
 void stopMotors(){
 	setDAC(0,0);
 	setDAC(1,0);
@@ -201,12 +188,6 @@ void setAngle() {
 	}
 }
 
-//To work on
-void XY(){
-	//figure out kinematics
-	//zero should be low link 60-degree and high link 90-degree?
-}
-
 //Lab2 Initialization
 void initLab2() {
 	timerInit();
@@ -218,8 +199,9 @@ void initLab2() {
 //Lab 2 Code
 void Lab2Code() {
 	if(PIDcheck){
+		int dx;
 		setAngle();
-		printf("Sensor: %0.1f Current: %f \r\n", ADCData(4), ADCData(6));
+		printf("AngL: %0.1f AngH: %f \r\n", ADCData(2), ADCData(3));
 		updatePID('H', highSetP);
 		updatePID('L', lowSetP);
 		PIDcheck = FALSE;
@@ -230,7 +212,8 @@ void Lab2Code() {
 			case 0:
 				//check IR sensor
 				int chk = objDetect();
-				if(chk){ //obj is on conveyor, switch to state 1?
+				if(chk){ //obj is on conveyor, switch to state 1
+				dx = getDist();
 				state = 1;
 				}
 				else{
@@ -238,24 +221,56 @@ void Lab2Code() {
 				}
 				break;
 			case 1:
-				//move arm down
+				//move arm to wait pos
+				int xpos = dx + 6.5;
+				getAngs(xpos, 5.75);
+				updatePID('H', highSetP);
+				updatePID('L', lowSetP);
+				//need to set waittime
+				state = 2;
 				break;
 			case 2:
-				//gripper
+				int xpos = dx + 6.5;
+				getAngs(xpos, 4.75);
+				updatePID('H', highSetP);
+				updatePID('L', lowSetP);
+				setServo(0,140);
+				state = 3;
+				//move arm to grip pos
 				break;
 			case 3:
-				//move arm up
+				//move arm to getweight pos
+				updatePID('H', 90);
+				updatePID('L', 90);
+				state = 4;
 				break;
 			case 4:
-				//determine weight --> go to case 5 or 6
+				//need to figure out current sampling at same time as arm moving
+				int current = ADCData(6);
+				if(current <= lowweight){
+					state = 5;
+				}
+				else if(current >= heighweight){
+					state = 6;
+				}
 				break;
 			case 5:
-				//put weight on left
-				//return to state 0
+				//set w1 at distance 11.68 in
+				highSetP = 96.21;
+				lowSetP = 189.80;
+				updatePID('H', highSetP);
+				updatePID('L', lowSetP);
+				setServo(0,0);
+				state = 0;
 				break;
 			case 6:
-				//put weight on right
-				//return to state 0
+				//set w2 at distance 7 in
+				highSetP = 192.71;
+				lowSetP = 149.56;
+				updatePID('H', highSetP);
+				updatePID('L', lowSetP);
+				setServo(0,0);
+				state = 0;
 				break;
 
 		}
