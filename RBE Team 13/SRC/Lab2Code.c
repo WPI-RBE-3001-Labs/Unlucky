@@ -213,7 +213,7 @@ void Lab2Code() {
 		lowSetP = getAngs(6.5, 5.75)[0];
 		highSetP = getAngs(6.5, 5.75)[1];
 		//servo attempt
-
+		setServo(5,90);
 		//state space for final. We can work on this as we go
 		/*
 		switch(state)
