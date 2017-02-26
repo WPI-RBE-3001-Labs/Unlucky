@@ -18,8 +18,8 @@ volatile unsigned long intTime;
 
 volatile double globalVal = 9;
 unsigned int PIDcheck = FALSE;
-volatile int highSetP = 90;
-volatile int lowSetP = 60;
+float highSetP = 90;
+float lowSetP = 60;
 int state = 0;
 //TASK LIST
 /* 	Done today:
@@ -70,18 +70,6 @@ void timerInit() {
 }
 
 
-//Angle Calculations//////////
-double radtoDeg(double ang){
-	return ang*(3.1459/180);
-}
-//TEST
-void getAngs(double px, double py){
-	highSetP = radtoDeg(acos((px*px + py*py - 72)/72));
-	double beta = radtoDeg(atan(py/px));
-	double gamma = radtoDeg(acos((px*px +py*py)/(12*sqrt(px*px+py*py))));
-	lowSetP = beta + gamma;
-}
-
 
 //ADC Functions/////////
 float ADCData(int channel){
@@ -114,6 +102,22 @@ float ADCData(int channel){
 	}
 }
 
+double pi = 3.1459;
+//Angle Calculations//////////
+double radtoDeg(double ang){
+	return ang*(pi/180);
+}
+//TEST
+//assuming links are both 6 inches long
+float * getAngs(double px, double py){
+	//can set these values. Trying to access them break it.
+	float angles[2];
+	angles[1] = radtoDeg(acos(((px*px + py*py) - 72)/72)); //theta 2
+	float beta = radtoDeg(atan(py/px));
+	float gam = radtoDeg(acos((px*px +py*py)/(12*sqrt(px*px+py*py)))); //theta 1
+	angles[0] = beta + gam;
+	return angles;
+}
 int objDetect(){
 	readADC2(6);
 	int val = 650;
@@ -205,6 +209,9 @@ void Lab2Code() {
 		updatePID('H', highSetP);
 		updatePID('L', lowSetP);
 		PIDcheck = FALSE;
+		//test to see if it would build (can Delete)
+		lowSetP = getAngs(6.5, 5.75)[0];
+		highSetP = getAngs(6.5, 5.75)[1];
 		//state space for final. We can work on this as we go
 		/*
 		switch(state)

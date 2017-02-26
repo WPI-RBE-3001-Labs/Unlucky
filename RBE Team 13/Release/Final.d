@@ -1,1 +1,1 @@
-Final.d Final.o: ../Final.c
+Final.o Final.o: ../Final.c
