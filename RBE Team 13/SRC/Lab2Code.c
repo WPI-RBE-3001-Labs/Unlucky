@@ -212,6 +212,8 @@ void Lab2Code() {
 		//test to see if it would build (can Delete)
 		lowSetP = getAngs(6.5, 5.75)[0];
 		highSetP = getAngs(6.5, 5.75)[1];
+		//servo attempt
+
 		//state space for final. We can work on this as we go
 		/*
 		switch(state)

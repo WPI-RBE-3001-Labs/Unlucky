@@ -10,11 +10,9 @@ int main(void) {
 	debugUSARTInit(115200); //Initialize UART
 	//initLab1();
 	initLab2();
-	//initFinal();
 	while (1) {
 		//Lab1Code();
 		Lab2Code();
-		//Final();
 	}
 	return 0;
 }
