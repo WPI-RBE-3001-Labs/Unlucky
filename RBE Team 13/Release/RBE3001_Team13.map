@@ -95,7 +95,6 @@ LOAD ./SRC/PID.o
 LOAD ./SRC/SPI.o
 LOAD ./SRC/USART.o
 LOAD ./SRC/main.o
-LOAD ./Final.o
 LOAD D:\workspace\RBELib\Release\libRBELib.a
 LOAD d:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
 LOAD d:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a
@@ -288,7 +287,6 @@ LOAD d:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .text          0x000001bc        0x0 ./SRC/SPI.o
  .text          0x000001bc        0x0 ./SRC/USART.o
  .text          0x000001bc        0x0 ./SRC/main.o
- .text          0x000001bc        0x0 ./Final.o
  .text          0x000001bc        0x0 D:\workspace\RBELib\Release\libRBELib.a(Debug.o)
  .text          0x000001bc        0x0 D:\workspace\RBELib\Release\libRBELib.a(SetServo.o)
  .text          0x000001bc        0x0 d:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
@@ -508,7 +506,6 @@ LOAD d:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .data          0x00800173        0x0 ./SRC/SPI.o
  .data          0x00800173        0x0 ./SRC/USART.o
  .data          0x00800173        0x0 ./SRC/main.o
- .data          0x00800173        0x0 ./Final.o
  .data          0x00800173        0x0 D:\workspace\RBELib\Release\libRBELib.a(Debug.o)
  .data          0x00800173       0x14 D:\workspace\RBELib\Release\libRBELib.a(SetServo.o)
  .data          0x00800187        0x0 d:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
@@ -587,7 +584,6 @@ LOAD d:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .bss           0x008002be        0x0 ./SRC/SPI.o
  .bss           0x008002be        0x0 ./SRC/USART.o
  .bss           0x008002be        0x0 ./SRC/main.o
- .bss           0x008002be        0x0 ./Final.o
  .bss           0x008002be        0x0 D:\workspace\RBELib\Release\libRBELib.a(Debug.o)
  .bss           0x008002be        0x0 D:\workspace\RBELib\Release\libRBELib.a(SetServo.o)
  .bss           0x008002be        0x0 d:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
