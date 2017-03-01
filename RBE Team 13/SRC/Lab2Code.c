@@ -120,7 +120,7 @@ float * getAngs(double px, double py){
 	return angles;
 }
 int objDetect(){
-	readADC2(6);
+	readADC2(5);
 	int val = 650;
 	int IRout = ADCL + (ADCH << 8);
 	if(IRout>val){//something on conveyer
@@ -214,7 +214,7 @@ void Lab2Code()
 		//setServo(1,180);
 		//setServo(0,180);
 		//printf("State: %u\r\n",state); //state print out
-		printf("IR: %f\r\n",ADCData(3));
+		printf("IR: %f \r\n",ADCData(5));
 		updatePID('H', highSetP);
 		updatePID('L', lowSetP);
 		//state space for final. We can work on this as we go
@@ -249,7 +249,7 @@ void Lab2Code()
 				break;
 			case 2:
 				//move arm to grip pos
-				highSetP = 75;
+				highSetP = 78;
 				lowSetP = 0;
 				if(ADCData(2) >= (lowSetP -2) && ADCData(2) <= (lowSetP + 2)) //got correct angles
 					{
