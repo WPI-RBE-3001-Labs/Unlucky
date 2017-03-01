@@ -7,34 +7,40 @@ C_SRCS += \
 ../SRC/ADC.c \
 ../SRC/DAC.c \
 ../SRC/Final.c \
+../SRC/Kinematics.c \
 ../SRC/Lab1Code.c \
 ../SRC/Lab2Code.c \
 ../SRC/PID.c \
 ../SRC/SPI.c \
 ../SRC/USART.c \
-../SRC/main.c 
+../SRC/main.c \
+../SRC/timer.c 
 
 OBJS += \
 ./SRC/ADC.o \
 ./SRC/DAC.o \
 ./SRC/Final.o \
+./SRC/Kinematics.o \
 ./SRC/Lab1Code.o \
 ./SRC/Lab2Code.o \
 ./SRC/PID.o \
 ./SRC/SPI.o \
 ./SRC/USART.o \
-./SRC/main.o 
+./SRC/main.o \
+./SRC/timer.o 
 
 C_DEPS += \
 ./SRC/ADC.d \
 ./SRC/DAC.d \
 ./SRC/Final.d \
+./SRC/Kinematics.d \
 ./SRC/Lab1Code.d \
 ./SRC/Lab2Code.d \
 ./SRC/PID.d \
 ./SRC/SPI.d \
 ./SRC/USART.d \
-./SRC/main.d 
+./SRC/main.d \
+./SRC/timer.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

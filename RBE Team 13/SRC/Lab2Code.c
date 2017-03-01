@@ -41,7 +41,6 @@ float Theta1 = 60;
 
  */
 
-//Timer Functions
 //ISR(TIMER0_COMPA_vect) {
 //	global++;
 //	if (global >= globalVal) {
@@ -53,20 +52,6 @@ float Theta1 = 60;
 //		}
 //	}
 //}
-void timerInit() {
-	//100hz timer
-	TIMSK0 = (0 << OCIE0B) | (1 << OCIE0A) | //Enable compare A interrupt
-			(0 << TOIE0);
-
-	TCCR0A = (0 << COM0A1) | (0 << COM0A0) | (0 << COM0B1) | (0 << COM0B0)
-			| (1 << WGM01) | (0 << WGM00);
-
-	TCCR0B = (0 << FOC0A) | (0 << FOC0B) | (0 << WGM02) | (1 << CS02)
-			| (0 << CS01) | //set clock divide to /1024
-			(1 << CS00);
-	OCR0A = 179; //should set to 100hz timer
-	sei();
-}
 
 //ADC Functions/////////
 float ADCData(int channel) {
@@ -98,25 +83,6 @@ float ADCData(int channel) {
 	} else {
 		return count2;
 	}
-}
-
-double pi = 3.1459;
-//Angle Calculations//////////
-double radtoDeg(double ang) {
-	return ang * (pi / 180);
-}
-//TEST
-//assuming links are both 6 inches long
-float * getAngs(double px, double py) {
-	//can set these values. Trying to access them break it.
-	//this will always return basically 0 :(
-	float angles[2];
-	angles[1] = radtoDeg(acos(((px * px + py * py) - 72) / 72)); //theta 2
-	float beta = radtoDeg(atan(py / px));
-	float gam = radtoDeg(
-			acos((px * px + py * py) / (12 * sqrt(px * px + py * py)))); //theta 1
-	angles[0] = beta + gam;
-	return angles;
 }
 
 void setAngle() {

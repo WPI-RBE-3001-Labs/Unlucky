@@ -1,4 +1,4 @@
-SRC/timer.o SRC/timer.o: ../SRC/timer.c \
+SRC/Kinematics.o SRC/Kinematics.o: ../SRC/Kinematics.c \
   D:\workspace\RBELib\include/RBELib/RBELib.h \
   D:\workspace\RBELib\include/RBELib/ADC.h \
   D:\workspace\RBELib\include/RBELib/DAC.h \

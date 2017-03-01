@@ -12,8 +12,15 @@
 float highSetP = 90;
 float lowSetP = 60;
 int state = 0;
+int flag = 0;
+volatile int tickA = 0;
 #define DefaultH 30;
 #define DefaultL 70;
+ISR(TIMER0_COMPA_vect)
+{
+	tickA ++; //100 every second
+	flag = 1;
+}
 //Setup
 void initFinal() {
 	initADC(2);
@@ -68,7 +75,6 @@ float getCurr(char motor) {
 	float count = ADCL + (ADCH << 8);
 	float curr = calcCurrent(count);
 	return curr;
-
 }
 //Servo 1
 void closeGrip() {
@@ -99,8 +105,13 @@ void finalState() {
 	printf("State: %u \r\n", state);
 	//Always run belt and update PID
 	runBelt();
-	updatePID('H', highSetP);
-	updatePID('L', lowSetP);
+	//100Hz update
+	if(flag == 1)
+	{
+		flag = 0;
+		updatePID('H', highSetP);
+		updatePID('L', lowSetP);
+	}
 
 	switch (state) {
 	//Check IR for object
@@ -115,14 +126,16 @@ void finalState() {
 	case 1:
 		highSetP = DefaultH;
 		lowSetP = DefaultL;
-		//Do we have to just hard time?
-		if(reachPosition() == 1){state = 2; _delay_ms(4600);} //has reached desired position (Delay 4.6 seconds)
+		if(reachPosition() == 1){state = 2;tickA = 0;} //has reached desired position
 		break;
 	//Move arm to grip position
 	case 2:
-		highSetP = 74;
-		lowSetP = 0;
-		if(reachPosition() == 1){state = 3;} //has reached desired position
+		if(tickA > 460)//(Delay 4.6 seconds)
+		{
+			highSetP = 74;
+			lowSetP = 0;
+		if(reachPosition() == 1){state = 3;closeGrip();} //has reached desired position
+		}
 		break;
 	//Move arm to wait position
 	case 3:
