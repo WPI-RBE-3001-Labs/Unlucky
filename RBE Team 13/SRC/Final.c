@@ -77,6 +77,18 @@ void openGrip() {
 void runBelt() {
 	setServo(0, 0);	//back driven, 180 is forward but the wrong way for our set up
 }
+//Determine whether arm has reached set positions
+int reachPosition()
+{
+	if (getAngL() >= (lowSetP - 2) && getAngL() <= (lowSetP + 2)) //got correct angles
+		{
+			if (getAngH() >= (highSetP - 2) && getAngH() <= (highSetP + 2)) //got correct angles
+				{
+					return 1;
+				}
+		}
+	return 0;
+}
 //State space
 void finalState() {
 	printf("State: %u \r\n", state);
@@ -100,44 +112,22 @@ void finalState() {
 		break;
 	//Move arm to wait position
 	case 1:
-		highSetP = DefaultH
-		;
-		lowSetP = DefaultL
-		;
-		if (getAngL() >= (lowSetP - 2) && getAngL() <= (lowSetP + 2)) //got correct angles
-				{
-			if (getAngH() >= (highSetP - 2) && getAngH() <= (highSetP + 2)) //got correct angles
-					{
-				//Can we not use a timer?
-				state = 2;
-				_delay_ms(4600); //Delay 4.6 sec
-			}
-		}
+		highSetP = DefaultH;
+		lowSetP = DefaultL;
+		//Do we have to just hard time?
+		if(reachPosition() == 1){state = 2; _delay_ms(4600);} //has reached desired position (Delay 4.6 seconds)
 		break;
 	//Move arm to grip position
 	case 2:
 		highSetP = 74;
 		lowSetP = 0;
-		if (getAngL() >= (lowSetP - 2) && getAngL() <= (lowSetP + 2)) //got correct angles
-				{
-			if (getAngH() >= (highSetP - 2) && getAngH() <= (highSetP + 2)) //got correct angles
-					{
-				closeGrip();
-				state = 3;
-			}
-		}
+		if(reachPosition() == 1){state = 3;} //has reached desired position
 		break;
 	//Move arm to wait position
 	case 3:
 		highSetP = DefaultH;
 		lowSetP = DefaultL;
-		if (getAngL() >= (lowSetP - 2) && getAngL() <= (lowSetP + 2)) //got correct angles
-				{
-			if (getAngH() >= (highSetP - 2) && getAngH() <= (highSetP + 2)) //got correct angles
-					{
-				state = 4;
-			}
-		}
+		if(reachPosition() == 1){state = 4;} //has reached desired position
 		break;
 	case 4:
 		//need to figure out current sampling at same time as arm moving
