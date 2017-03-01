@@ -111,6 +111,7 @@ double radtoDeg(double ang){
 //assuming links are both 6 inches long
 float * getAngs(double px, double py){
 	//can set these values. Trying to access them break it.
+	//this will always return basically 0 :(
 	float angles[2];
 	angles[1] = radtoDeg(acos(((px*px + py*py) - 72)/72)); //theta 2
 	float beta = radtoDeg(atan(py/px));
@@ -201,65 +202,78 @@ void initLab2() {
 	setConst('L', 120,0,0);
 }
 //Lab 2 Code
-void Lab2Code() {
-	if(PIDcheck){
-		int dx;
-		setAngle();
-		printf("AngL: %0.1f AngH: %f \r\n", ADCData(2), ADCData(3));
+void Lab2Code()
+{
+	//printf("hello");
+	if(PIDcheck)
+	{
+
+		//setAngle();
+		//printf("AngL: %0.1f AngH: %f \r\n", ADCData(2), ADCData(3));
+		//servo attempt
+		//setServo(1,180);
+		//setServo(0,180);
+		//printf("State: %u\r\n",state); //state print out
+		printf("IR: %f\r\n",ADCData(3));
 		updatePID('H', highSetP);
 		updatePID('L', lowSetP);
-		PIDcheck = FALSE;
-		//test to see if it would build (can Delete)
-		lowSetP = getAngs(6.5, 5.75)[0];
-		highSetP = getAngs(6.5, 5.75)[1];
-		//servo attempt
-		setServo(5,90);
 		//state space for final. We can work on this as we go
-		/*
+		int dx;
+		int chk;
+		int xpos;
+		int current;
+		int lowWeight;
+		int highWeight;
 		switch(state)
 		{
 			case 0:
 				//check IR sensor
-				int chk = objDetect();
+				chk = objDetect();
 				if(chk){ //obj is on conveyor, switch to state 1
-				dx = getDist();
 				state = 1;
 				}
-				else{
-				state = 0;
-				}
+				highSetP = 90;
+				lowSetP = 90;
 				break;
 			case 1:
 				//move arm to wait pos
-				int xpos = dx + 6.5;
-				getAngs(xpos, 5.75);
-				updatePID('H', highSetP);
-				updatePID('L', lowSetP);
-				//need to set waittime
-				state = 2;
+				highSetP = 45;
+				lowSetP = 60;
+				if(ADCData(2) >= (lowSetP -2) && ADCData(2) <= (lowSetP + 2)) //got correct angles
+				{
+					if(ADCData(3) >= (highSetP -2) && ADCData(3) <= (highSetP + 2)) //got correct angles
+						{
+							state = 2;
+						}
+				}
 				break;
 			case 2:
-				int xpos = dx + 6.5;
-				getAngs(xpos, 4.75);
-				updatePID('H', highSetP);
-				updatePID('L', lowSetP);
-				setServo(0,140);
-				state = 3;
 				//move arm to grip pos
+				highSetP = 75;
+				lowSetP = 0;
+				if(ADCData(2) >= (lowSetP -2) && ADCData(2) <= (lowSetP + 2)) //got correct angles
+					{
+						if(ADCData(3) >= (highSetP -2) && ADCData(3) <= (highSetP + 2)) //got correct angles
+							{
+											state = 3;
+											//close gripper.
+							}
+					}
+
 				break;
 			case 3:
 				//move arm to getweight pos
-				updatePID('H', 90);
-				updatePID('L', 90);
-				state = 4;
+				//updatePID('H', 90);
+				//updatePID('L', 90);
+				//state = 4;
 				break;
 			case 4:
 				//need to figure out current sampling at same time as arm moving
-				int current = ADCData(6);
-				if(current <= lowweight){
+				current = ADCData(6);
+				if(current <= lowWeight){
 					state = 5;
 				}
-				else if(current >= heighweight){
+				else if(current >= highWeight){
 					state = 6;
 				}
 				break;
@@ -283,9 +297,8 @@ void Lab2Code() {
 				break;
 
 		}
-		*/
-
-	}
-
+		//PIDcheck = FALSE;
+		}
 }
+
 
