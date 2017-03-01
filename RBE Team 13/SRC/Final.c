@@ -94,16 +94,16 @@ void finalState() {
 	case 0:
 		openGrip();
 		int chk = objDetect();
-		if (chk) {
-			state = 1;
-		}
+		if (chk) {state = 1;}
 		highSetP = 90;
 		lowSetP = 90;
 		break;
 	//Move arm to wait position
 	case 1:
-		highSetP = DefaultH;
-		lowSetP = DefaultL;
+		highSetP = DefaultH
+		;
+		lowSetP = DefaultL
+		;
 		if (getAngL() >= (lowSetP - 2) && getAngL() <= (lowSetP + 2)) //got correct angles
 				{
 			if (getAngH() >= (highSetP - 2) && getAngH() <= (highSetP + 2)) //got correct angles
@@ -114,21 +114,21 @@ void finalState() {
 			}
 		}
 		break;
+	//Move arm to grip position
 	case 2:
-		//Move arm to grip position
 		highSetP = 74;
 		lowSetP = 0;
 		if (getAngL() >= (lowSetP - 2) && getAngL() <= (lowSetP + 2)) //got correct angles
 				{
 			if (getAngH() >= (highSetP - 2) && getAngH() <= (highSetP + 2)) //got correct angles
 					{
-				setServo(1, 180);
+				closeGrip();
 				state = 3;
 			}
 		}
 		break;
+	//Move arm to wait position
 	case 3:
-		//Move arm to wait position
 		highSetP = DefaultH;
 		lowSetP = DefaultL;
 		if (getAngL() >= (lowSetP - 2) && getAngL() <= (lowSetP + 2)) //got correct angles

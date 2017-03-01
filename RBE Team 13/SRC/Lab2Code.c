@@ -53,7 +53,6 @@ float Theta1 = 60;
 //		}
 //	}
 //}
-
 void timerInit() {
 	//100hz timer
 	TIMSK0 = (0 << OCIE0B) | (1 << OCIE0A) | //Enable compare A interrupt
