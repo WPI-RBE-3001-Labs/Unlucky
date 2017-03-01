@@ -48,22 +48,27 @@ int objDetect() {
 }
 //Calculates current value
 float calcCurrent(float val) {
-	//The resistor across the sensor is .5Ohms
-	float res = .05;
-	float VCC = 5;
+	//The resistor across the sensor is .5Ohms and gain is 20 so no division needed (20*0.05 = 1)
 	float offset = 2.7077;	//count2 @rest gives 554 so offset = 2.7077
-	float gain = 20;		//confirmed
-	float Resolution = VCC / 1023;
-	float curr = ((float) (((val * Resolution) - offset) / gain) / res);
-	//printf("%f \n\r", curr);
+	float Resolution = 5 / 1023; //Vcc is 5
+	float curr = ((float) ((val * Resolution) - offset));
 	return curr;
 }
-//CurrentSense: ADC6
-float getCurr() {
-	readADC2(6);
+//CurrentSense: Low Motor 0, High Motor 1
+float getCurr(char motor) {
+	switch(motor)
+	{
+	case 'H':
+		readADC2(1);
+		break;
+	case 'L':
+		readADC2(0);
+		break;
+	}
 	float count = ADCL + (ADCH << 8);
 	float curr = calcCurrent(count);
 	return curr;
+
 }
 //Servo 1
 void closeGrip() {
@@ -92,10 +97,6 @@ int reachPosition()
 //State space
 void finalState() {
 	printf("State: %u \r\n", state);
-//		int current;
-//		int lowWeight;
-//		int highWeight;
-
 	//Always run belt and update PID
 	runBelt();
 	updatePID('H', highSetP);
