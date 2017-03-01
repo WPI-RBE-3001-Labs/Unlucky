@@ -12,6 +12,8 @@
 float highSetP = 90;
 float lowSetP = 60;
 int state = 0;
+#define DefaultH 30;
+#define DefaultL 70;
 //Setup
 void initFinal() {
 	initADC(2);
@@ -88,8 +90,8 @@ void finalState() {
 	updatePID('L', lowSetP);
 
 	switch (state) {
+	//Check IR for object
 	case 0:
-		//check IR sensor
 		openGrip();
 		int chk = objDetect();
 		if (chk) {
@@ -98,21 +100,22 @@ void finalState() {
 		highSetP = 90;
 		lowSetP = 90;
 		break;
+	//Move arm to wait position
 	case 1:
-		//move arm to wait pos
-		highSetP = 45;
-		lowSetP = 60;
+		highSetP = DefaultH;
+		lowSetP = DefaultL;
 		if (getAngL() >= (lowSetP - 2) && getAngL() <= (lowSetP + 2)) //got correct angles
 				{
 			if (getAngH() >= (highSetP - 2) && getAngH() <= (highSetP + 2)) //got correct angles
 					{
+				//Can we not use a timer?
 				state = 2;
-				_delay_ms(4600); //Delay 4.7 sec
+				_delay_ms(4600); //Delay 4.6 sec
 			}
 		}
 		break;
 	case 2:
-		//move arm to grip pos
+		//Move arm to grip position
 		highSetP = 74;
 		lowSetP = 0;
 		if (getAngL() >= (lowSetP - 2) && getAngL() <= (lowSetP + 2)) //got correct angles
@@ -125,9 +128,9 @@ void finalState() {
 		}
 		break;
 	case 3:
-		//move arm to getweight pos
-		highSetP = 45;
-		lowSetP = 60;
+		//Move arm to wait position
+		highSetP = DefaultH;
+		lowSetP = DefaultL;
 		if (getAngL() >= (lowSetP - 2) && getAngL() <= (lowSetP + 2)) //got correct angles
 				{
 			if (getAngH() >= (highSetP - 2) && getAngH() <= (highSetP + 2)) //got correct angles
