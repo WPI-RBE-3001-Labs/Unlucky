@@ -9,10 +9,12 @@ int main(void) {
 	initRBELib(); //Setup printf() and setServo()
 	debugUSARTInit(115200); //Initialize UART
 	//initLab1();
-	initLab2();
+	//initLab2();
+	initFinal();
 	while (1) {
 		//Lab1Code();
-		Lab2Code();
+		//Lab2Code();
+		finalState();
 	}
 	return 0;
 }

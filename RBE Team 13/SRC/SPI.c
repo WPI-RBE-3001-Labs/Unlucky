@@ -22,13 +22,13 @@ void initSPI(void) {
 	//Bits 1 - 0: 128 CLK prescaler
 	SPCR = 0x53;
 
-	DDRC |= ((1<<DDC0) |// spare SS
-				(1<<DDC1) | // CoProcessor SS
-				(1<<DDC2) | // spare SS
-				(1<<DDC3) | // spare SS
-				(1<<DDC4) | // encoder 1 SS
-				(1<<DDC5) | // encoder 0 SS
-				(1<<DDC6)); // spare SS
+	DDRC |= ((1 << DDC0) |	// spare SS
+			(1 << DDC1) | // CoProcessor SS
+			(1 << DDC2) | // spare SS
+			(1 << DDC3) | // spare SS
+			(1 << DDC4) | // encoder 1 SS
+			(1 << DDC5) | // encoder 0 SS
+			(1 << DDC6)); // spare SS
 
 	//DAC
 	DAC_SS_ddr = OUTPUT;
@@ -50,6 +50,7 @@ unsigned char spiTransceive(unsigned char data) {
 	//start transmission
 	SPDR = data;
 	//wait for transmission to complete
-	while (!(SPSR & 0x80));
+	while (!(SPSR & 0x80))
+		;
 	return SPDR;
 }

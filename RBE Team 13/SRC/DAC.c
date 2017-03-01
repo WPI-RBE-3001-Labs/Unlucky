@@ -10,22 +10,22 @@ int up = 1;
 int sig0 = 0;
 int sig1 = 4000;
 void Triangle() {
-	if (up == 1){ //going up
-		if (sig0 > 4000){ //approaching max of DAC
+	if (up == 1) { //going up
+		if (sig0 > 4000) { //approaching max of DAC
 			up = 0; //go down
 			sig0 = sig0 - 40;
 			sig1 = sig1 + 40;
-		} else {//Keep going up
+		} else { //Keep going up
 			sig0 = sig0 + 40;
 			sig1 = sig1 - 40;
 		}
 	}
-	if (up == 0){ //going down
-		if (sig0 < 100){ //approaching min of DAC
+	if (up == 0) { //going down
+		if (sig0 < 100) { //approaching min of DAC
 			up = 1; //go up
 			sig0 = sig0 + 40;
 			sig1 = sig1 - 40;
-		} else {//Keep going down
+		} else { //Keep going down
 			sig0 = sig0 - 40;
 			sig1 = sig1 + 40;
 		}
