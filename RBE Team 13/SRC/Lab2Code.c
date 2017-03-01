@@ -42,17 +42,17 @@ float Theta1 = 60;
  */
 
 //Timer Functions
-ISR(TIMER0_COMPA_vect) {
-	global++;
-	if (global >= globalVal) {
-		global = 0;
-		systemTime++;
-		intTime++;
-		if (intTime >= 10) {
-			PIDcheck = TRUE;
-		}
-	}
-}
+//ISR(TIMER0_COMPA_vect) {
+//	global++;
+//	if (global >= globalVal) {
+//		global = 0;
+//		systemTime++;
+//		intTime++;
+//		if (intTime >= 10) {
+//			PIDcheck = TRUE;
+//		}
+//	}
+//}
 
 void timerInit() {
 	//100hz timer
