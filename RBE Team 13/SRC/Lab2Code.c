@@ -75,11 +75,14 @@ void timerInit() {
 float ADCData(int channel){
 	readADC2(channel);
 	count2 = ADCL + (ADCH << 8);
+	//return count2;
 	if(channel == 2){
-		return (0.2211 * count2) - 36.244;
+		return (0.2211 * count2) - 36.244; //our arm
+		//return (0.2483 * count2) - 66.825; //team 8 arm
 	}
 	else if(channel == 3){
-		return (0.2311 * count2) - 59.14;
+		return (0.2311 * count2) - 59.14; //our arm
+		//return (0.2434 * count2) - 67.541; //team 8 arm
 	}
 	//current sense
 	else if(channel == 6){
@@ -91,7 +94,7 @@ float ADCData(int channel){
 			float gain = 20;//confirmed
 			float Resolution = VCC/1023;
 			float curr = ((float) (((val * Resolution) - offset) / gain)/res);
-			//printf("%f \n\r", curr);
+			printf("%f \n\r", curr);
 			return curr;
 		}
 		float curr = calcCurrent(count2);
@@ -121,7 +124,7 @@ float * getAngs(double px, double py){
 }
 int objDetect(){
 	readADC2(5);
-	int val = 650;
+	int val = 350;//with box
 	int IRout = ADCL + (ADCH << 8);
 	if(IRout>val){//something on conveyer
 		return TRUE;
@@ -129,14 +132,6 @@ int objDetect(){
 		return FALSE;
 	}
 }
-//DAC Functions///////////////////////
-void stopMotors(){
-	setDAC(0,0);
-	setDAC(1,0);
-	setDAC(2,0);
-	setDAC(3,0);
-}
-
 //PID
 void updatePID(char link, int setPoint){
 	switch(link){
@@ -204,23 +199,18 @@ void initLab2() {
 //Lab 2 Code
 void Lab2Code()
 {
-	//printf("hello");
 	if(PIDcheck)
 	{
-
 		//setAngle();
-		//printf("AngL: %0.1f AngH: %f \r\n", ADCData(2), ADCData(3));
-		//servo attempt
-		//setServo(1,180);
-		//setServo(0,180);
-		//printf("State: %u\r\n",state); //state print out
-		printf("IR: %f \r\n",ADCData(5));
+		//printf("AngL: %0.1f AngH: %0.1f \r\n", ADCData(2), ADCData(3));
+
+		setServo(0,0); //track
+		printf("State: %u\r\n",state); //state print out
+		//printf("Current: %f \r\n",ADCData(6));
 		updatePID('H', highSetP);
-		updatePID('L', lowSetP);
+		//updatePID('L', lowSetP);
 		//state space for final. We can work on this as we go
-		int dx;
-		int chk;
-		int xpos;
+
 		int current;
 		int lowWeight;
 		int highWeight;
@@ -228,7 +218,8 @@ void Lab2Code()
 		{
 			case 0:
 				//check IR sensor
-				chk = objDetect();
+				setServo(1,0);//180 closed, 0 open
+				int chk = objDetect();
 				if(chk){ //obj is on conveyor, switch to state 1
 				state = 1;
 				}
@@ -244,37 +235,46 @@ void Lab2Code()
 					if(ADCData(3) >= (highSetP -2) && ADCData(3) <= (highSetP + 2)) //got correct angles
 						{
 							state = 2;
+							_delay_ms(4600); //Delay 4.7 sec
 						}
 				}
 				break;
 			case 2:
 				//move arm to grip pos
-				highSetP = 78;
+				highSetP = 74;
 				lowSetP = 0;
 				if(ADCData(2) >= (lowSetP -2) && ADCData(2) <= (lowSetP + 2)) //got correct angles
 					{
 						if(ADCData(3) >= (highSetP -2) && ADCData(3) <= (highSetP + 2)) //got correct angles
 							{
-											state = 3;
-											//close gripper.
+								setServo(1,180);
+								state = 3;
+
 							}
 					}
 
 				break;
 			case 3:
 				//move arm to getweight pos
-				//updatePID('H', 90);
-				//updatePID('L', 90);
-				//state = 4;
+				highSetP = 45;
+				lowSetP = 60;
+				if(ADCData(2) >= (lowSetP -2) && ADCData(2) <= (lowSetP + 2)) //got correct angles
+									{
+										if(ADCData(3) >= (highSetP -2) && ADCData(3) <= (highSetP + 2)) //got correct angles
+											{
+															state = 4;
+											}
+									}
+
 				break;
 			case 4:
 				//need to figure out current sampling at same time as arm moving
 				current = ADCData(6);
 				if(current <= lowWeight){
-					state = 5;
+					//state = 5;
 				}
 				else if(current >= highWeight){
-					state = 6;
+					//state = 6;
 				}
 				break;
 			case 5:
