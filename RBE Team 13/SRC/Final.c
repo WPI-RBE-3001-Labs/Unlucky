@@ -42,12 +42,15 @@ float getAngH() {
 	return (0.2311 * count) - 59.14; //our arm
 	//return (0.2434 * count2) - 67.541; //team 8 arm
 }
+float getIR(){
+	readADC2(5);
+	float count = ADCL + (ADCH << 8);
+	return count;
+}
 //IR: ADC5
 int objDetect() {
-	readADC2(5);
 	int val = 350; //with box
-	int IRout = ADCL + (ADCH << 8);
-	if (IRout > val) { //something on conveyer
+	if (getIR() > val) { //something on conveyer
 		return TRUE;
 	} else {
 		return FALSE;
@@ -104,7 +107,8 @@ int reachPosition()
 }
 //State space
 void finalState() {
-	printf("State: %u \r\n", state);
+	//printf("State: %u \r\n", state);
+	//printf("IR: %f \r\n", getIR());
 	//Always run belt and update PID
 	runBelt();
 	//100Hz update
@@ -120,7 +124,7 @@ void finalState() {
 	case 0:
 		openGrip();
 		int chk = objDetect();
-		if (chk) {state = 1;}
+		if (chk) {state = 1;printf("Detected");}
 		highSetP = 90;
 		lowSetP = 90;
 		break;
@@ -128,7 +132,7 @@ void finalState() {
 	case 1:
 		highSetP = DefaultH;
 		lowSetP = DefaultL;
-		if(reachPosition() == 1){state = 2;tickA = 0;} //has reached desired position
+		if(reachPosition() == 1){state = 2;tickA = 0;printf("wait");} //has reached desired position
 		break;
 	//Move arm to grip position
 	case 2:
