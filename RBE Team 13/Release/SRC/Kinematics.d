@@ -1,46 +1,46 @@
-SRC/Kinematics.d SRC/Kinematics.o: ../SRC/Kinematics.c \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/RBELib.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/ADC.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/DAC.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/Debug.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/motors.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/USARTDebug.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/timer.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/Periph.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/pot.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/PID.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/reg_structs.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/ports.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/SPI.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/SetServo.h \
-  C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/SlaveSelects.h
+SRC/Kinematics.o SRC/Kinematics.o: ../SRC/Kinematics.c \
+  D:\workspace\RBELib\include/RBELib/RBELib.h \
+  D:\workspace\RBELib\include/RBELib/ADC.h \
+  D:\workspace\RBELib\include/RBELib/DAC.h \
+  D:\workspace\RBELib\include/RBELib/Debug.h \
+  D:\workspace\RBELib\include/RBELib/motors.h \
+  D:\workspace\RBELib\include/RBELib/USARTDebug.h \
+  D:\workspace\RBELib\include/RBELib/timer.h \
+  D:\workspace\RBELib\include/RBELib/Periph.h \
+  D:\workspace\RBELib\include/RBELib/pot.h \
+  D:\workspace\RBELib\include/RBELib/PID.h \
+  D:\workspace\RBELib\include/RBELib/reg_structs.h \
+  D:\workspace\RBELib\include/RBELib/ports.h \
+  D:\workspace\RBELib\include/RBELib/SPI.h \
+  D:\workspace\RBELib\include/RBELib/SetServo.h \
+  D:\workspace\RBELib\include/RBELib/SlaveSelects.h
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/RBELib.h:
+D:\workspace\RBELib\include/RBELib/RBELib.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/ADC.h:
+D:\workspace\RBELib\include/RBELib/ADC.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/DAC.h:
+D:\workspace\RBELib\include/RBELib/DAC.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/Debug.h:
+D:\workspace\RBELib\include/RBELib/Debug.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/motors.h:
+D:\workspace\RBELib\include/RBELib/motors.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/USARTDebug.h:
+D:\workspace\RBELib\include/RBELib/USARTDebug.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/timer.h:
+D:\workspace\RBELib\include/RBELib/timer.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/Periph.h:
+D:\workspace\RBELib\include/RBELib/Periph.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/pot.h:
+D:\workspace\RBELib\include/RBELib/pot.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/PID.h:
+D:\workspace\RBELib\include/RBELib/PID.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/reg_structs.h:
+D:\workspace\RBELib\include/RBELib/reg_structs.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/ports.h:
+D:\workspace\RBELib\include/RBELib/ports.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/SPI.h:
+D:\workspace\RBELib\include/RBELib/SPI.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/SetServo.h:
+D:\workspace\RBELib\include/RBELib/SetServo.h:
 
-C:\Users\Lucy\workspace\RBELib\trunk\RBELib\include/RBELib/SlaveSelects.h:
+D:\workspace\RBELib\include/RBELib/SlaveSelects.h:
