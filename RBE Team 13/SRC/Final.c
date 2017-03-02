@@ -131,10 +131,9 @@ char weightCheck() {
 		currentTot += currents[i];
 	}
 	long currentAvg = currentTot / 100;
-	if (tickA % 5 == 0) {
-		printf("CA %lu\r\n", currentAvg);
-	}
-	return ('E');
+	printf("CA %lu\r\n", currentAvg);
+	if(currentAvg > 450){return 'H';}
+	else {return 'L';}
 }
 //Servo 1
 void closeGrip() {
@@ -224,6 +223,8 @@ void finalState() {
 	case 3:
 		if (tickA > 75) //Delay 0.75 seconds
 				{
+			highSetP = 0;
+			lowSetP = 90;
 			//Determine Weight
 			if (weightCheck() == 'H') {
 				state = 5;
@@ -232,15 +233,10 @@ void finalState() {
 				state = 6;
 				printf("Light");
 			}
-			highSetP = 0;
-			lowSetP = 90;
-			if(tickA > 100)
-			{
-			state = 4;
-			}
 		}
 		break;
 	case 4:
+		//case that does nothing for testing purposes
 		break;
 	case 5:
 		//set w1 at distance 11.68 in (Lucy picked these angles)
