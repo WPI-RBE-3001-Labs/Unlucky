@@ -132,6 +132,7 @@ char weightCheck() {
 	}
 	long currentAvg = currentTot / 100;
 	printf("CA %lu\r\n", currentAvg);
+	//This is not actually a tested value as of now
 	if(currentAvg > 450){return 'H';}
 	else {return 'L';}
 }
@@ -175,19 +176,18 @@ void finalState() {
 		flag = 0;
 	}
 	switch (state) {
+
 	//Check IR for object
 	case 0:
 		openGrip();
 		//printf("IR: %f \r\n", getIR());
 		int chk = objDetect();
-		if (chk) {
-			state = 1;
-			printf("Detected \r\n");
-		}
+		if (chk) {state = 1;printf("Detected \r\n");}
 		highSetP = 70;
 		lowSetP = 70;
 		break;
-		//Move arm to wait position
+
+	//Move arm to wait position
 	case 1:
 		highSetP = -15;
 		lowSetP = 70;
@@ -197,17 +197,14 @@ void finalState() {
 			printf("Wait\r\n");
 		}
 		break;
-		//Move arm to grip position
+
+	//Move arm to grip position
 	case 2:
-		if (TRUE) {
-		}
-		; //so line below works
+		if (TRUE) {}; //Can't declare a variable after start of case for some reason
 		float curIR = getIR();
-		if (curIR > maxIR) {
-			maxIR = curIR;
-		} //finds distance with IR
+		if (curIR > maxIR) {maxIR = curIR;} //finds distance with IR
 		if (tickA > 380) //Delay 3.8 seconds
-				{
+		{
 			findPos();
 			if (reachPosition() == 1) {
 				state = 3;
@@ -216,36 +213,35 @@ void finalState() {
 				getY(lowSetP, highSetP);
 				getX(lowSetP, highSetP);
 				//printf("Max %f\r\n", maxIR);
-			}
+		}
 		}
 		break;
-		//Move arm to wait position
+
+	//Move arm to wait position
 	case 3:
 		if (tickA > 75) //Delay 0.75 seconds
-				{
+		{
 			highSetP = 0;
 			lowSetP = 90;
 			//Determine Weight
-			if (weightCheck() == 'H') {
-				state = 5;
-				printf("Heavy");
-			} else if (weightCheck() == 'L') {
-				state = 6;
-				printf("Light");
-			}
+			if (weightCheck() == 'H') {state = 5;printf("Heavy");}
+			else if (weightCheck() == 'L') {state = 6;printf("Light");}
 		}
 		break;
+
+	//case that does nothing for testing purposes
 	case 4:
-		//case that does nothing for testing purposes
 		break;
+
+	//set w1 at distance 11.68 in (Lucy picked these angles)
 	case 5:
-		//set w1 at distance 11.68 in (Lucy picked these angles)
 				highSetP = 96.21;
 				lowSetP = 189.80;
 				if(reachPosition() == 1){openGrip();state = 0;printf("Restart");}
 		break;
+
+	//set w2 at distance 7 in (Lucy picked these angles)
 	case 6:
-		//set w2 at distance 7 in (Lucy picked these angles)
 				highSetP = 192.71;
 				lowSetP = 149.56;
 				if(reachPosition() == 1){openGrip();state = 0;printf("Restart");}
