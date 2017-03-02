@@ -8,7 +8,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-
+//Board is Team 1's
+//Arm is Team 8's
+//Programmer is ours
 float highSetP = 90;
 float lowSetP = 60;
 int state = 0;
@@ -130,7 +132,7 @@ char weightCheck() {
 	}
 	long currentAvg = currentTot / 100;
 	if (tickA % 5 == 0) {
-		printf("%lu\r\n", currentAvg);
+		printf("CA %lu\r\n", currentAvg);
 	}
 	return ('E');
 }
@@ -223,39 +225,34 @@ void finalState() {
 		if (tickA > 75) //Delay 0.75 seconds
 				{
 			//Determine Weight
-//			if (weightCheck() == 'H') {
-//				state = 5;
-//				printf("Heavy");
-//			} else if (weightCheck() == 'L') {
-//				state = 6;
-//				printf("Light");
-//			}
+			if (weightCheck() == 'H') {
+				state = 5;
+				printf("Heavy");
+			} else if (weightCheck() == 'L') {
+				state = 6;
+				printf("Light");
+			}
 			highSetP = 0;
 			lowSetP = 90;
-			if (reachPosition() == 1) {
-				state = 4;
+			if(tickA > 100)
+			{
+			state = 4;
 			}
 		}
 		break;
 	case 4:
 		break;
 	case 5:
-		//set w1 at distance 11.68 in
-//				highSetP = 96.21;
-//				lowSetP = 189.80;
-//				updatePID('H', highSetP);
-//				updatePID('L', lowSetP);
-//				setServo(0,0);
-//				state = 0;
+		//set w1 at distance 11.68 in (Lucy picked these angles)
+				highSetP = 96.21;
+				lowSetP = 189.80;
+				if(reachPosition() == 1){openGrip();state = 0;printf("Restart");}
 		break;
 	case 6:
-		//set w2 at distance 7 in
-//				highSetP = 192.71;
-//				lowSetP = 149.56;
-//				updatePID('H', highSetP);
-//				updatePID('L', lowSetP);
-//				setServo(0,0);
-//				state = 0;
+		//set w2 at distance 7 in (Lucy picked these angles)
+				highSetP = 192.71;
+				lowSetP = 149.56;
+				if(reachPosition() == 1){openGrip();state = 0;printf("Restart");}
 		break;
 
 	}
