@@ -14,20 +14,18 @@ float lowSetP = 60;
 int state = 0;
 int flag = 0;
 volatile int tickA = 0;
-#define DefaultH 30;
-#define DefaultL 70;
-ISR(TIMER0_COMPA_vect)
-{
-	tickA ++; //100 every second
-	flag = 1;
+float maxIR = 0;
+ISR(TIMER0_COMPA_vect) {
+	tickA++; //100 every second
+	flag = 1; //PID Flag
 }
 //Setup
 void initFinal() {
 	initADC(2);
 	initSPI();
 	timerInit();
-	setConst('H', 200, 0.5, 0.1); //look at this
-	setConst('L', 200, 0.5, 0.1); //look at this
+	setConst('H', 100, 0, 0); //look at this
+	setConst('L', 100, 0, 0); //look at this
 }
 //LowLink: ADC2
 float getAngL() {
@@ -79,13 +77,13 @@ void updatePIDF(char link, int setPoint) {
 		break;
 	}
 }
-
-float getIR(){
+//IR: ADC5
+float getIR() {
 	readADC2(5);
 	float count = ADCL + (ADCH << 8);
 	return count;
 }
-//IR: ADC5
+//Is there an object detected by IR
 int objDetect() {
 	if (getIR() > 350) { //something on conveyer
 		return TRUE;
@@ -95,18 +93,20 @@ int objDetect() {
 }
 //Calculates current value
 float calcCurrent(float val) {
-	//The resistor across the sensor is .5Ohms and gain is 20 so no division needed (20*0.05 = 1)
-	int gain = 20;
-	float res = .05;
-	float offset = 2.7077;	//count2 @rest gives 554 so offset = 2.7077
-	float Resolution = 5 / 1023; //Vcc is 5
-	float curr = ((float) ((val * Resolution) - offset)/gain/res);
+
+	float offset = 2.70;
+	float gain = 20.0;
+	float resistorVal = .05;
+	float VCC = 5.0;
+	float ADCMAX = 1023;
+	float curr = -200.0
+			+ ((float) 100.0 * (val * VCC / ADCMAX) - offset) / gain
+					/ resistorVal;
 	return curr;
 }
 //CurrentSense: Low Motor 0, High Motor 1
 float getCurr(char motor) {
-	switch(motor)
-	{
+	switch (motor) {
 	case 'H':
 		readADC2(1);
 		break;
@@ -115,8 +115,24 @@ float getCurr(char motor) {
 		break;
 	}
 	float count = ADCL + (ADCH << 8);
-	float curr = calcCurrent(count);
-	return curr;
+	//float curr = calcCurrent(count);
+	return count;
+}
+//Get an average current value then return H for heavy or L for light
+char weightCheck() {
+	int currents[100];
+	for (int i = 0; i < 100; i++) {
+		currents[i] = getCurr('H');
+	}
+	long currentTot = 0;
+	for (int i = 0; i < 100; i++) {
+		currentTot += currents[i];
+	}
+	long currentAvg = currentTot / 100;
+	if (tickA % 5 == 0) {
+		printf("%lu\r\n", currentAvg);
+	}
+	return ('E');
 }
 //Servo 1
 void closeGrip() {
@@ -131,70 +147,97 @@ void runBelt() {
 	setServo(0, 0);	//back driven, 180 is forward but the wrong way for our set up
 }
 //Determine whether arm has reached set positions
-int reachPosition()
-{
+int reachPosition() {
 	if (getAngL() >= (lowSetP - 3) && getAngL() <= (lowSetP + 3)) //got correct angles
-		{
-			if (getAngH() >= (highSetP - 3) && getAngH() <= (highSetP + 3)) //got correct angles
+			{
+		if (getAngH() >= (highSetP - 3) && getAngH() <= (highSetP + 3)) //got correct angles
 				{
-					return 1;
-				}
+			return 1;
 		}
+	}
 	return 0;
+}
+//determine where arm should grab based on weight location
+void findPos() {
+	//equations based off of testing math
+	highSetP = -0.1863 * maxIR + 90.098;
+	lowSetP = 0.0543 * maxIR + 15.776;
 }
 //State space
 void finalState() {
-	//printf("State: %u \r\n", state);
-	//Always run belt and update PID
-	runBelt();
+	runBelt();	//Always run belt
 	//100Hz update
-	if(flag == 1)
-	{
+	if (flag == 1) {
 		updatePIDF('H', highSetP);
 		updatePIDF('L', lowSetP);
+		//printf("H: %0.1f,L: %0.1f,IR: %0.1f \r\n",getAngH(),getAngL(),getIR());
 		flag = 0;
 	}
-
 	switch (state) {
 	//Check IR for object
 	case 0:
 		openGrip();
 		//printf("IR: %f \r\n", getIR());
 		int chk = objDetect();
-		if (chk) {state = 1;printf("Detected \r\n");}
+		if (chk) {
+			state = 1;
+			printf("Detected \r\n");
+		}
 		highSetP = 70;
 		lowSetP = 70;
 		break;
-	//Move arm to wait position
+		//Move arm to wait position
 	case 1:
-		highSetP = DefaultH;
-		lowSetP = DefaultL;
-		if(reachPosition() == 1){state = 2;tickA = 0;printf("wait\r\n");} //has reached desired position
-		break;
-	//Move arm to grip position
-	case 2:
-		if(tickA > 340)//(Delay 3.4 seconds)
-		{
-			highSetP = 74;
-			lowSetP = 0;
-		if(reachPosition() == 1){state = 3;closeGrip();printf("grip\r\n");} //has reached desired position
+		highSetP = -15;
+		lowSetP = 70;
+		if (reachPosition() == 1) {
+			state = 2;
+			tickA = 0;
+			printf("Wait\r\n");
 		}
 		break;
-	//Move arm to wait position
+		//Move arm to grip position
+	case 2:
+		if (TRUE) {
+		}
+		; //so line below works
+		float curIR = getIR();
+		if (curIR > maxIR) {
+			maxIR = curIR;
+		} //finds distance with IR
+		if (tickA > 380) //Delay 3.8 seconds
+				{
+			findPos();
+			if (reachPosition() == 1) {
+				state = 3;
+				closeGrip();
+				tickA = 0;
+				getY(lowSetP, highSetP);
+				getX(lowSetP, highSetP);
+				//printf("Max %f\r\n", maxIR);
+			}
+		}
+		break;
+		//Move arm to wait position
 	case 3:
-		highSetP = DefaultH;
-		lowSetP = DefaultL;
-		if(reachPosition() == 1){state = 4;} //has reached desired position
+		if (tickA > 75) //Delay 0.75 seconds
+				{
+			//Determine Weight
+//			if (weightCheck() == 'H') {
+//				state = 5;
+//				printf("Heavy");
+//			} else if (weightCheck() == 'L') {
+//				state = 6;
+//				printf("Light");
+//			}
+			highSetP = 0;
+			lowSetP = 90;
+			if (reachPosition() == 1) {
+				state = 4;
+			}
+		}
 		break;
 	case 4:
-		//need to figure out current sampling at same time as arm moving
-//				current = ADCData(6);
-//				if(current <= lowWeight){
-//					state = 5;
-//				}
-//				else if(current >= highWeight){
-//					state = 6;
-//				}
 		break;
 	case 5:
 		//set w1 at distance 11.68 in

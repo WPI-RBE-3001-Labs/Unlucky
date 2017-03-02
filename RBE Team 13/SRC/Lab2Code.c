@@ -52,7 +52,6 @@ float Theta1 = 60;
 //		}
 //	}
 //}
-
 //ADC Functions/////////
 float ADCData(int channel) {
 	readADC2(channel);
