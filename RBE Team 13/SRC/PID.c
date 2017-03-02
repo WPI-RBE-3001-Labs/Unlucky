@@ -64,39 +64,3 @@ signed int calcPID(char link, int setPoint, int actPos) {
 	return pidValue;
 }
 
-void updatePID(char link, int setPoint) {
-	switch (link) {
-	case 'H':
-		if (FALSE) {
-			setDAC(2, 0);
-			setDAC(3, 0);
-		} else {
-			long pidNum = calcPID('H', setPoint, ADCData(3));
-			//printf("pidNum: %0.1f\n\r", pidNum);
-			if (pidNum >= 0) {
-				setDAC(2, pidNum);
-				setDAC(3, 0);
-			} else {
-				setDAC(2, 0);
-				setDAC(3, -pidNum);
-			}
-		}
-		break;
-	case 'L':
-		if (FALSE) {
-			setDAC(0, 0);
-			setDAC(1, 0);
-		} else {
-			long pidNum = calcPID('L', setPoint, ADCData(2));
-			if (pidNum >= 0) {
-				setDAC(0, 0);
-				setDAC(1, pidNum);
-			} else {
-				setDAC(0, -pidNum);
-				setDAC(1, 0);
-			}
-		}
-		break;
-	}
-}
-

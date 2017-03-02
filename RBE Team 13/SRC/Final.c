@@ -25,23 +25,61 @@ ISR(TIMER0_COMPA_vect)
 void initFinal() {
 	initADC(2);
 	initSPI();
-	setConst('H', 120, 0, 0); //look at this
-	setConst('L', 120, 0, 0); //look at this
+	timerInit();
+	setConst('H', 200, 0.5, 0.1); //look at this
+	setConst('L', 200, 0.5, 0.1); //look at this
 }
 //LowLink: ADC2
 float getAngL() {
 	readADC2(2);
 	float count = ADCL + (ADCH << 8);
-	return (0.2211 * count) - 36.244; //our arm
-	//return (0.2483 * count2) - 66.825; //team 8 arm
+	//return (0.2211 * count) - 36.244; //our arm
+	return (0.2483 * count) - 66.825; //team 8 arm
 }
 //HighLink: ADC3
 float getAngH() {
 	readADC2(3);
 	float count = ADCL + (ADCH << 8);
-	return (0.2311 * count) - 59.14; //our arm
-	//return (0.2434 * count2) - 67.541; //team 8 arm
+	//return (0.2311 * count) - 59.14; //our arm
+	return (0.2434 * count) - 67.541; //team 8 arm
 }
+//PID
+void updatePIDF(char link, int setPoint) {
+	switch (link) {
+	case 'H':
+		if (FALSE) {
+			setDAC(2, 0);
+			setDAC(3, 0);
+		} else {
+			long pidNum = calcPID('H', setPoint, getAngH());
+			//printf("pidNum: %0.1f\n\r", pidNum);
+			if (pidNum >= 0) {
+				setDAC(2, pidNum);
+				setDAC(3, 0);
+			} else {
+				setDAC(2, 0);
+				setDAC(3, -pidNum);
+			}
+		}
+		break;
+	case 'L':
+		if (FALSE) {
+			setDAC(0, 0);
+			setDAC(1, 0);
+		} else {
+			long pidNum = calcPID('L', setPoint, getAngL());
+			if (pidNum >= 0) {
+				setDAC(0, 0);
+				setDAC(1, pidNum);
+			} else {
+				setDAC(0, -pidNum);
+				setDAC(1, 0);
+			}
+		}
+		break;
+	}
+}
+
 float getIR(){
 	readADC2(5);
 	float count = ADCL + (ADCH << 8);
@@ -49,8 +87,7 @@ float getIR(){
 }
 //IR: ADC5
 int objDetect() {
-	int val = 350; //with box
-	if (getIR() > val) { //something on conveyer
+	if (getIR() > 350) { //something on conveyer
 		return TRUE;
 	} else {
 		return FALSE;
@@ -108,31 +145,31 @@ int reachPosition()
 //State space
 void finalState() {
 	//printf("State: %u \r\n", state);
-	//printf("IR: %f \r\n", getIR());
 	//Always run belt and update PID
 	runBelt();
 	//100Hz update
 	if(flag == 1)
 	{
+		updatePIDF('H', highSetP);
+		updatePIDF('L', lowSetP);
 		flag = 0;
-		updatePID('H', highSetP);
-		updatePID('L', lowSetP);
 	}
 
 	switch (state) {
 	//Check IR for object
 	case 0:
 		openGrip();
+		printf("IR: %f \r\n", getIR());
 		int chk = objDetect();
-		if (chk) {state = 1;printf("Detected");}
-		highSetP = 90;
-		lowSetP = 90;
+		if (chk) {state = 1;printf("Detected \r\n");}
+		highSetP = 70;
+		lowSetP = 70;
 		break;
 	//Move arm to wait position
 	case 1:
 		highSetP = DefaultH;
 		lowSetP = DefaultL;
-		if(reachPosition() == 1){state = 2;tickA = 0;printf("wait");} //has reached desired position
+		if(reachPosition() == 1){state = 2;tickA = 0;printf("wait\r\n");} //has reached desired position
 		break;
 	//Move arm to grip position
 	case 2:
