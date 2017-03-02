@@ -56,9 +56,11 @@ int objDetect() {
 //Calculates current value
 float calcCurrent(float val) {
 	//The resistor across the sensor is .5Ohms and gain is 20 so no division needed (20*0.05 = 1)
+	int gain = 20;
+	float res = .05;
 	float offset = 2.7077;	//count2 @rest gives 554 so offset = 2.7077
 	float Resolution = 5 / 1023; //Vcc is 5
-	float curr = ((float) ((val * Resolution) - offset));
+	float curr = ((float) ((val * Resolution) - offset)/gain/res);
 	return curr;
 }
 //CurrentSense: Low Motor 0, High Motor 1
