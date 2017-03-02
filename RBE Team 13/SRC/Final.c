@@ -120,7 +120,7 @@ float getCurr(char motor) {
 }
 //Servo 1
 void closeGrip() {
-	setServo(1, 180);
+	setServo(1, 220);
 }
 //Servo 1
 void openGrip() {
@@ -133,9 +133,9 @@ void runBelt() {
 //Determine whether arm has reached set positions
 int reachPosition()
 {
-	if (getAngL() >= (lowSetP - 2) && getAngL() <= (lowSetP + 2)) //got correct angles
+	if (getAngL() >= (lowSetP - 3) && getAngL() <= (lowSetP + 3)) //got correct angles
 		{
-			if (getAngH() >= (highSetP - 2) && getAngH() <= (highSetP + 2)) //got correct angles
+			if (getAngH() >= (highSetP - 3) && getAngH() <= (highSetP + 3)) //got correct angles
 				{
 					return 1;
 				}
@@ -159,7 +159,7 @@ void finalState() {
 	//Check IR for object
 	case 0:
 		openGrip();
-		printf("IR: %f \r\n", getIR());
+		//printf("IR: %f \r\n", getIR());
 		int chk = objDetect();
 		if (chk) {state = 1;printf("Detected \r\n");}
 		highSetP = 70;
@@ -173,11 +173,11 @@ void finalState() {
 		break;
 	//Move arm to grip position
 	case 2:
-		if(tickA > 460)//(Delay 4.6 seconds)
+		if(tickA > 340)//(Delay 3.4 seconds)
 		{
 			highSetP = 74;
 			lowSetP = 0;
-		if(reachPosition() == 1){state = 3;closeGrip();} //has reached desired position
+		if(reachPosition() == 1){state = 3;closeGrip();printf("grip\r\n");} //has reached desired position
 		}
 		break;
 	//Move arm to wait position
