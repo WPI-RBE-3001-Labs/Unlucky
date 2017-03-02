@@ -10,6 +10,7 @@ C_SRCS += \
 ../SRC/Kinematics.c \
 ../SRC/Lab1Code.c \
 ../SRC/Lab2Code.c \
+../SRC/Lab3Stuff.c \
 ../SRC/PID.c \
 ../SRC/SPI.c \
 ../SRC/USART.c \
@@ -23,6 +24,7 @@ OBJS += \
 ./SRC/Kinematics.o \
 ./SRC/Lab1Code.o \
 ./SRC/Lab2Code.o \
+./SRC/Lab3Stuff.o \
 ./SRC/PID.o \
 ./SRC/SPI.o \
 ./SRC/USART.o \
@@ -36,6 +38,7 @@ C_DEPS += \
 ./SRC/Kinematics.d \
 ./SRC/Lab1Code.d \
 ./SRC/Lab2Code.d \
+./SRC/Lab3Stuff.d \
 ./SRC/PID.d \
 ./SRC/SPI.d \
 ./SRC/USART.d \
