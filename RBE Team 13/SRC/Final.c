@@ -122,18 +122,18 @@ float getCurr(char motor) {
 }
 //Get an average current value then return H for heavy or L for light
 char weightCheck() {
-	int currents[100];
-	for (int i = 0; i < 100; i++) {
+	int currents[10];
+	for (int i = 0; i < 10; i++) {
 		currents[i] = getCurr('H');
 	}
 	long currentTot = 0;
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 10; i++) {
 		currentTot += currents[i];
 	}
-	long currentAvg = currentTot / 100;
+	long currentAvg = currentTot / 10;
 	printf("CA %lu\r\n", currentAvg);
 	//This is not actually a tested value as of now
-	if(currentAvg > 450){return 'H';}
+	if(currentAvg > 530){return 'H';}
 	else {return 'L';}
 }
 //Servo 1
@@ -181,6 +181,7 @@ void finalState() {
 	case 0:
 		openGrip();
 		//printf("IR: %f \r\n", getIR());
+		maxIR = 0;
 		int chk = objDetect();
 		if (chk) {state = 1;printf("Detected \r\n");}
 		highSetP = 70;
@@ -224,8 +225,9 @@ void finalState() {
 			highSetP = 0;
 			lowSetP = 90;
 			//Determine Weight
-			if (weightCheck() == 'H') {state = 5;printf("Heavy");}
-			else if (weightCheck() == 'L') {state = 6;printf("Light");}
+			if (weightCheck() == 'H') {state = 5;printf("Heavy\r\n");}
+			else if (weightCheck() == 'L') {state = 6;printf("Light\r\n");}
+			//if(reachPosition() == 1){printf("Time = %u \r\n",tickA);state = 4;}
 		}
 		break;
 
@@ -237,14 +239,16 @@ void finalState() {
 	case 5:
 				highSetP = 96.21;
 				lowSetP = 189.80;
-				if(reachPosition() == 1){openGrip();state = 0;printf("Restart");}
+				if(reachPosition() == 1){openGrip();state = 0;printf("Restart\r\n");}
 		break;
 
 	//set w2 at distance 7 in (Lucy picked these angles)
 	case 6:
-				highSetP = 192.71;
+				//highSetP = 192.71;
 				lowSetP = 149.56;
-				if(reachPosition() == 1){openGrip();state = 0;printf("Restart");}
+				highSetP = 180;
+				//lowSetP = 150;
+				if(reachPosition() == 1){openGrip();state = 0;printf("Restart\r\n");}
 		break;
 
 	}

@@ -7,24 +7,19 @@
 
 #include "RBELib/RBELib.h"
 
-#define CLR_CNTR 0x20
-#define WRITE_MDR0 0x88
-#define WRITE_MDR1 0x90
+#define M0Code 0x88
+#define M1Code 0x90
 
 int rvCount = 2047;
 
-/**
- * @brief Find the acceleration in the given axis (X, Y, Z).
- * @param  axis The axis that you want to get the measurement of.
- * @return gVal Value of  acceleration.
- *
- * @todo Create a function that is able to find the acceleration of a given axis.
- */
+//get value from the accelerometer
 signed int getAccel(int axis) {
+	//might not need this section
 	DDRDbits._P7 = OUTPUT;
 	PORTDbits._P7 = 1;
 	SPCR |= (1<<SPR1) + (1<<SPR0);
 
+	//set
 	signed int accelVal = 0x0000;
 	signed int gVal = 0x0000;
 	char temp0 = 0x00;
@@ -49,18 +44,6 @@ signed int getAccel(int axis) {
 	return gVal;
 }
 
-/**
- * @brief Read an IR sensor and calculate the distance of the block.
- * @param  chan The port that the IR sensor is on.
- * @return value The distance the block is from the sensor.
- *
- * @todo Make a function that is able to get the ADC value of the IR sensor.
- */
-int IRDist(int chan) {
-	return 0;
-}
-
-
 void encInit(int chan) {
 	DDRCbits._P5 = OUTPUT;
 	DDRCbits._P4 = OUTPUT;
@@ -68,21 +51,21 @@ void encInit(int chan) {
 	ENCODER_SS_1 = 1;
 	if (chan == 0) {
 		ENCODER_SS_0 = 0;
-		spiTransceive(WRITE_MDR0);
+		spiTransceive(M0Code);
 		spiTransceive(0x03);
 		ENCODER_SS_0 = 1;
 		ENCODER_SS_0 = 0;
-		spiTransceive(WRITE_MDR1);
+		spiTransceive(M1Code);
 		spiTransceive(0x02);
 		ENCODER_SS_0 = 1;
 	}
 	else if (chan == 1) {
 		ENCODER_SS_1 = 0;
-		spiTransceive(WRITE_MDR0);
+		spiTransceive(M0Code);
 		spiTransceive(0x03);
 		ENCODER_SS_1 = 1;
 		ENCODER_SS_1 = 0;
-		spiTransceive(WRITE_MDR1);
+		spiTransceive(M1Code);
 		spiTransceive(0x02);
 		ENCODER_SS_1 = 1;
 	}
@@ -122,8 +105,6 @@ signed long encCount(int chan) {
 	}
 	value |= (data1<<8);
 	value |= data2;
-	//printf("%d\t%d\t\r\n", data1, data2);
-	//resetEncCount(chan);
 	return value;
 
 }
