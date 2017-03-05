@@ -1,7 +1,7 @@
 /* main.c
  *
  *  Created on: August 20, 2016
- *      Author: Joest
+ *      Author: sangu
  */
 #include "RBELib/RBELib.h"
 #include <stdlib.h>

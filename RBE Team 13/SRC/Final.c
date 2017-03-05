@@ -11,12 +11,13 @@
 //Board is Team 1's
 //Arm is Team 8's
 //Programmer is ours
-float highSetP = 90;
-float lowSetP = 60;
-int state = 0;
-int flag = 0;
-volatile int tickA = 0;
-float maxIR = 0;
+float highSetP = 90; //The angle to set the top link to
+float lowSetP = 60; // The angle to set the bottom link to
+int state = 0; // what part of the state space the program is in
+int flag = 0; //determines if a sufficient time has passed for PID to be run again
+volatile int tickA = 0; // timer counter
+float maxIR = 0; //max IR value
+//100Hz timer
 ISR(TIMER0_COMPA_vect) {
 	tickA++; //100 every second
 	flag = 1; //PID Flag
@@ -26,24 +27,22 @@ void initFinal() {
 	initADC(2);
 	initSPI();
 	timerInit();
-	setConst('H', 100, 0, 0); //look at this
-	setConst('L', 100, 0, 0); //look at this
+	setConst('H', 100, 0, 0);
+	setConst('L', 100, 0, 0);
 }
 //LowLink: ADC2
 float getAngL() {
 	readADC2(2);
 	float count = ADCL + (ADCH << 8);
-	//return (0.2211 * count) - 36.244; //our arm
-	return (0.2483 * count) - 66.825; //team 8 arm
+	return (0.2483 * count) - 66.825; //conversion to angle
 }
 //HighLink: ADC3
 float getAngH() {
 	readADC2(3);
 	float count = ADCL + (ADCH << 8);
-	//return (0.2311 * count) - 59.14; //our arm
-	return (0.2434 * count) - 67.541; //team 8 arm
+	return (0.2434 * count) - 67.541; //conversion to angle
 }
-//PID
+//Update PID
 void updatePIDF(char link, int setPoint) {
 	switch (link) {
 	case 'H':
@@ -52,7 +51,6 @@ void updatePIDF(char link, int setPoint) {
 			setDAC(3, 0);
 		} else {
 			long pidNum = calcPID('H', setPoint, getAngH());
-			//printf("pidNum: %0.1f\n\r", pidNum);
 			if (pidNum >= 0) {
 				setDAC(2, pidNum);
 				setDAC(3, 0);
@@ -87,7 +85,7 @@ float getIR() {
 }
 //Is there an object detected by IR
 int objDetect() {
-	if (getIR() > 350) { //something on conveyer
+	if (getIR() > 370) { //something on conveyer
 		return TRUE;
 	} else {
 		return FALSE;
@@ -117,14 +115,13 @@ float getCurr(char motor) {
 		break;
 	}
 	float count = ADCL + (ADCH << 8);
-	//float curr = calcCurrent(count);
 	return count;
 }
 //Get an average current value then return H for heavy or L for light
 char weightCheck() {
 	int currents[10];
 	for (int i = 0; i < 10; i++) {
-		currents[i] = getCurr('H');
+		currents[i] = getCurr('L');
 	}
 	long currentTot = 0;
 	for (int i = 0; i < 10; i++) {
@@ -133,7 +130,7 @@ char weightCheck() {
 	long currentAvg = currentTot / 10;
 	printf("CA %lu\r\n", currentAvg);
 	//This is not actually a tested value as of now
-	if(currentAvg > 530){return 'H';}
+	if(currentAvg > 550){return 'H';}
 	else {return 'L';}
 }
 //Servo 1
@@ -148,7 +145,7 @@ void openGrip() {
 void runBelt() {
 	setServo(0, 0);	//back driven, 180 is forward but the wrong way for our set up
 }
-//Determine whether arm has reached set positions
+//Determine whether arm has reached set positions (angle tolerance of 3 degrees for both links)
 int reachPosition() {
 	if (getAngL() >= (lowSetP - 3) && getAngL() <= (lowSetP + 3)) //got correct angles
 			{
@@ -172,7 +169,6 @@ void finalState() {
 	if (flag == 1) {
 		updatePIDF('H', highSetP);
 		updatePIDF('L', lowSetP);
-		//printf("H: %0.1f,L: %0.1f,IR: %0.1f \r\n",getAngH(),getAngL(),getIR());
 		flag = 0;
 	}
 	switch (state) {
@@ -180,7 +176,6 @@ void finalState() {
 	//Check IR for object
 	case 0:
 		openGrip();
-		//printf("IR: %f \r\n", getIR());
 		maxIR = 0;
 		int chk = objDetect();
 		if (chk) {state = 1;printf("Detected \r\n");}
@@ -190,8 +185,8 @@ void finalState() {
 
 	//Move arm to wait position
 	case 1:
-		highSetP = -15;
-		lowSetP = 70;
+		highSetP = -5;
+		lowSetP = 55;
 		if (reachPosition() == 1) {
 			state = 2;
 			tickA = 0;
@@ -204,16 +199,13 @@ void finalState() {
 		if (TRUE) {}; //Can't declare a variable after start of case for some reason
 		float curIR = getIR();
 		if (curIR > maxIR) {maxIR = curIR;} //finds distance with IR
-		if (tickA > 380) //Delay 3.8 seconds
+		if (tickA > 375) //Delay 3.75  seconds
 		{
 			findPos();
 			if (reachPosition() == 1) {
 				state = 3;
 				closeGrip();
 				tickA = 0;
-				getY(lowSetP, highSetP);
-				getX(lowSetP, highSetP);
-				//printf("Max %f\r\n", maxIR);
 		}
 		}
 		break;
@@ -224,10 +216,12 @@ void finalState() {
 		{
 			highSetP = 0;
 			lowSetP = 90;
+			if(reachPosition() == 1)
+			{
 			//Determine Weight
 			if (weightCheck() == 'H') {state = 5;printf("Heavy\r\n");}
 			else if (weightCheck() == 'L') {state = 6;printf("Light\r\n");}
-			//if(reachPosition() == 1){printf("Time = %u \r\n",tickA);state = 4;}
+			}
 		}
 		break;
 
@@ -235,21 +229,20 @@ void finalState() {
 	case 4:
 		break;
 
-	//set w1 at distance 11.68 in (Lucy picked these angles)
+	//Drop off weight at H location
 	case 5:
-				highSetP = 96.21;
-				lowSetP = 189.80;
-				if(reachPosition() == 1){openGrip();state = 0;printf("Restart\r\n");}
+				highSetP = 95;
+				lowSetP = 180;
+				//Delays to drop weight correctly
+				if(reachPosition() == 1){openGrip();_delay_ms(500);state = 0;printf("Restart\r\n");}
 		break;
 
-	//set w2 at distance 7 in (Lucy picked these angles)
+	//Drop off weight at L location
 	case 6:
-				//highSetP = 192.71;
-				lowSetP = 149.56;
-				highSetP = 180;
-				//lowSetP = 150;
-				if(reachPosition() == 1){openGrip();state = 0;printf("Restart\r\n");}
+				lowSetP = 15;
+				highSetP = 75;
+				//Delays to drop weight correctly
+				if(reachPosition() == 1){openGrip();_delay_ms(500); state = 0;printf("Restart\r\n");}
 		break;
-
 	}
 }

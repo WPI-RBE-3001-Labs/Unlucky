@@ -6,7 +6,7 @@
  */
 #include "RBELib/RBELib.h"
 #include <math.h>
-//Placeholder values
+
 double pi = 3.1459;
 //Link length in mm
 float L1 = 150.0;

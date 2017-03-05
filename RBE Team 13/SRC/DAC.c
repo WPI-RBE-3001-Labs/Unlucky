@@ -9,6 +9,7 @@
 int up = 1;
 int sig0 = 0;
 int sig1 = 4000;
+//triangle wave output
 void Triangle() {
 	if (up == 1) { //going up
 		if (sig0 > 4000) { //approaching max of DAC

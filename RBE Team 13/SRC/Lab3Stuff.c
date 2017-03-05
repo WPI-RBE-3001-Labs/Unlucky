@@ -10,40 +10,35 @@
 #define M0Code 0x88
 #define M1Code 0x90
 
-int rvCount = 2047;
+int vref = 5;
 
-//get value from the accelerometer
-signed int getAccel(int axis) {
-	//might not need this section
-	DDRDbits._P7 = OUTPUT;
-	PORTDbits._P7 = 1;
-	SPCR |= (1<<SPR1) + (1<<SPR0);
-
+//get value from the accelerometer 0 = x, 1 = y, 2 = z
+int getAccel(int axis) {
 	//set
-	signed int accelVal = 0x0000;
-	signed int gVal = 0x0000;
-	char temp0 = 0x00;
-	int temp1 = 0x0000;
-	int temp2 = 0x0000;
-
+	unsigned int accelVal = 0; //acceleration
+	unsigned int gVal = 0;//g force
+	//assert spare CS to enable communication between SPI and accelerometer
 	PORTDbits._P7 = 0;
-	temp0 = spiTransceive(0x06);
-	temp1 = spiTransceive((axis<<6));
-	temp2 = spiTransceive(0x00);
+	//config bits
+	spiTransceive(0x06);
+	//get axis information
+	accelVal = spiTransceive((axis<<6)); //Shifts  axis into the first two bits and sends zero bits
+	accelVal = (accelVal & 0x0F) << 8; //Shifts the byte that was just read
+	accelVal += spiTransceive(0x00); //sends zeros and recieves the rest of the data
+
+	//deassert spare CS
 	PORTDbits._P7 = 1;
-	temp1 &= (0x0F);
-	accelVal |= ((temp1<<8) + temp2);
-	//printf("%d\t%d\t\r\n", temp1, temp2);
-	if (accelVal >= rvCount) {
-		gVal = ((accelVal - rvCount)*.22);
+	return accelVal;
+	//convert acceleration value into Gforce
+	if (accelVal >= vref) {
+		gVal = ((accelVal - vref)*.22);
 	}
 	else {
-		gVal = -((rvCount - accelVal)*.22);
+		gVal = -((vref - accelVal)*.22);
 	}
-	SPCR &= 0xFD;
 	return gVal;
 }
-
+//Initialise encoder
 void encInit(int chan) {
 	DDRCbits._P5 = OUTPUT;
 	DDRCbits._P4 = OUTPUT;
@@ -71,7 +66,7 @@ void encInit(int chan) {
 	}
 
 }
-
+//reset encoder counter
 void resetEncCount(int chan) {
 	if (chan == 0) {
 		ENCODER_SS_0 = 0;
@@ -84,7 +79,7 @@ void resetEncCount(int chan) {
 		ENCODER_SS_1 = 1;
 	}
 }
-
+//determine encoder value
 signed long encCount(int chan) {
 	signed long value = 0x00000000;
 	int data1 = 0;
